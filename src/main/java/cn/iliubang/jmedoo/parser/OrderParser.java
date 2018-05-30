@@ -26,7 +26,7 @@ public class OrderParser implements ParserInterface {
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             Object val = entry.getValue();
             if (val instanceof String && (val.equals("ASC") || val.equals("DESC"))) {
-                sql.append("\"").append(StringUtil.camel2Underline(entry.getKey())).append("\" ").append(val).append(",");
+                sql.append("\"").append(StringUtil.camel2Underline(entry.getKey())).append("\" ").append(val).append(", ");
             }
         }
 

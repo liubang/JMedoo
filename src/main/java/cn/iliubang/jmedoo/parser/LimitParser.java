@@ -33,9 +33,9 @@ public class LimitParser implements ParserInterface {
         }
 
         if (s == 1) {
-            return " LIMIT " + listLimit.get(0);
+            return "LIMIT " + listLimit.get(0);
         } else {
-            return " LIMIT " + listLimit.get(0) + "," + listLimit.get(1);
+            return "LIMIT " + listLimit.get(0) + "," + listLimit.get(1);
         }
     }
 }
