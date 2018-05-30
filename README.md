@@ -73,8 +73,8 @@ public static void main(String[] args) {
         };
         List<Object> column = new ArrayList<Object>() {
             {
-                add("post.postId");
-                add("post.title");
+                add("post.postId(pppId)");
+                add("post.title(tttttitle)");
                 add("account.userId");
             }
         };
@@ -90,6 +90,6 @@ public static void main(String[] args) {
 输出
 
 ```java
-SELECT "post"."post_id", "post"."title", "account"."user_id" FROM "test" RIGHT JOIN "account" USING ("account_id") LEFT JOIN "user" ON "test"."t_name" = "user"."user_name" AND "test"."t_id" = "user"."user_id" FULL JOIN "in_user" USING ("i_id") INNER JOIN "o_user" USING ("o_id") WHERE (("starta" > ? AND "enda" < ?) OR ("startb" BETWEEN (?,?) AND "endb" != ?)) AND ("tableb"."endc" > ? OR "tablea"."startc" != ?) AND "class_id" IN (?,?) ORDER BY "id" DESC,"time" ASC LIMIT 10,234
+SELECT "post"."post_id" AS "pppId", "post"."title" AS "tttttitle", "account"."user_id" FROM "test" RIGHT JOIN "account" USING ("account_id") LEFT JOIN "user" ON "test"."t_name" = "user"."user_name" AND "test"."t_id" = "user"."user_id" FULL JOIN "in_user" USING ("i_id") INNER JOIN "o_user" USING ("o_id") WHERE (("starta" > ? AND "enda" < ?) OR ("startb" BETWEEN (?,?) AND "endb" != ?)) AND ("tableb"."endc" > ? OR "tablea"."startc" != ?) AND "class_id" IN (?,?) ORDER BY "id" DESC, "time" ASC LIMIT 10,234
 [1, 2, 3, 4, 5, 7, 6, 1, 2]
 ```

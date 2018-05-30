@@ -87,8 +87,8 @@ public class Test {
             };
             List<Object> column = new ArrayList<Object>() {
                 {
-                    add("post.postId");
-                    add("post.title");
+                    add("post.postId(pppId)");
+                    add("post.title(tttttitle)");
                     add("account.userId");
                 }
             };
