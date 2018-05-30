@@ -1,5 +1,5 @@
 # JMedoo
-Java版的Medoo
+Java版的Medoo查询表达式
 
 测试代码
 
