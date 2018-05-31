@@ -3,93 +3,143 @@ Java版的Medoo查询表达式
 
 测试代码
 
-```java
+column.
 
-public static void main(String[] args) {
-    Query query = new Query();
-    query.setWhere(new HashMap<String, Object>() {
-        {
-            put("OR#1", new HashMap<String, Object>() {
-                {
-                    put("AND#1", new HashMap<String, Object>() {
-                        {
-                            put("starta[>]", 1);
-                            put("enda[<]", 2);
-                        }
-                    });
-                    put("AND#2", new HashMap<String, Object>() {
-                        {
-                            put("startb[<>]", new ArrayList<Integer>() {
-                                {
-                                    add(3);
-                                    add(4);
-                                }
-                            });
-                            put("endb[!]", 5);
-                        }
-                    });
-                }
-            });
-            put("OR#2", new HashMap<String, Object>() {
-                {
-                    put("tablea.startc[!]", 6);
-                    put("tableb.endc[>]", 7);
-                }
-            });
-            put("classId", new ArrayList<Integer>() {
-                {
-                    add(1);
-                    add(2);
-                }
-            });
-        }
-    });
-    query.setOrder(new HashMap<String, Object>() {
-        {
-            put("id", "DESC");
-            put("time", "ASC");
-        }
-    });
-    query.setLimit(new ArrayList<Integer>(2) {
-        {
-            add(10);
-            add(234);
-        }
-    });
+```json
+[
+  "tableA.column1(tac1)",
+  "tableA.column2",
+  "tableB.column1(tbc1)",
+  "tableB.column2(tbc2)"
+]
+```
+join table 
 
-    try {
-        Map<String, Object> joinTable = new LinkedHashMap<String, Object>() {
-            {
-                put("[<]account", "accountId");
-                put("[>]user", new HashMap<String, String>() {
-                    {
-                        put("tId", "userId");
-                        put("tName", "userName");
-                    }
-                });
-                put("[<>]inUser", "iId");
-                put("[><]oUser", "oId");
-            }
-        };
-        List<Object> column = new ArrayList<Object>() {
-            {
-                add("post.postId(pppId)");
-                add("post.title(tttttitle)");
-                add("account.userId");
-            }
-        };
-        SqlObjects objects = (new SqlBuilder()).buildSelect("test", joinTable, column, query);
-        System.out.println(objects.getSql());
-        System.out.println(Arrays.asList(objects.getObjects()));
-    } catch (SqlParseException e) {
-        e.printStackTrace();
-    }
+```json
+{
+  "[<]tableA": "tac1",
+  "[>]tableB": "tbc1",
+  "[<>]tableC": "tcc1",
+  "[><]tableD": "tdc1",
+  "[>]tableE": [
+    "tec1", "tec2", "tec3"
+  ]
 }
 ```
 
-输出
+query
+
+```json
+{
+  "where": {
+    "AND#1": {
+      "OR#1": {
+        "or11[<]": "or11",
+        "or12": "or12"
+      },
+      "OR#2": {
+        "or21": "or21",
+        "or22": "or22"
+      },
+      "OR#3": {
+        "AND#1": {
+          "or3and11": "or3and11",
+          "or3and12": "or3and12"
+        },
+        "AND#2": {
+          "or3and21": "or3and21",
+          "or3and22": "or3and22"
+        }
+      }
+    },
+    "AND#2": {
+      "and21[!]": "and21",
+      "and22": "and22"
+    },
+    "updateTime[>]": "2018-12-21 12:12:12",
+    "outdateTime[<>]": [
+      "t1", "t2"
+    ]
+  },
+  "order": {
+    "name": "ASC",
+    "id": "DESC"
+  },
+  "limit": [
+    12,
+    34
+  ]
+}
+```
+
+公共方法
 
 ```java
-SELECT "post"."post_id" AS "pppId", "post"."title" AS "tttttitle", "account"."user_id" FROM "test" RIGHT JOIN "account" USING ("account_id") LEFT JOIN "user" ON "test"."t_name" = "user"."user_name" AND "test"."t_id" = "user"."user_id" FULL JOIN "in_user" USING ("i_id") INNER JOIN "o_user" USING ("o_id") WHERE (("starta" > ? AND "enda" < ?) OR ("startb" BETWEEN (?,?) AND "endb" != ?)) AND ("tableb"."endc" > ? OR "tablea"."startc" != ?) AND "class_id" IN (?,?) ORDER BY "id" DESC, "time" ASC LIMIT 10,234
-[1, 2, 3, 4, 5, 7, 6, 1, 2]
+private static String readFile(String file) throws Exception {
+    InputStreamReader inputStreamReader = new InputStreamReader(TestBuilder.class.getResourceAsStream(file), "UTF-8");
+    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+    String line;
+    StringBuilder sb = new StringBuilder();
+    while ((line = bufferedReader.readLine()) != null) {
+        sb.append(line);
+    }
+
+    return sb.toString();
+}
+```
+
+```java
+public void testSelect() throws Exception {
+    String select = readFile("/select.json");
+    Query query = JSON.parseObject(select, Query.class);
+    SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+    System.out.println(sqlObjects);
+}
+// 输出
+// SqlObjects{sql='SELECT * FROM "table_a" WHERE (("or12" = ? OR "or11" < ?) AND (("or3and12" = ? AND "or3and11" = ?) OR ("or3and21" = ? AND "or3and22" = ?)) AND ("or21" = ? OR "or22" = ?)) AND ("and21" != ? AND "and22" = ?) AND "update_time" > ? AND "outdate_time" BETWEEN (?,?) ORDER BY "name" ASC, "id" DESC LIMIT 12,34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}
+```
+
+```java
+public void testSelect1() throws Exception {
+    String select = readFile("/select.json");
+    String column = readFile("/column.json");
+    String join = readFile("/join.json");
+    Query query = JSON.parseObject(select, Query.class);
+    @SuppressWarnings("unchecked")
+    Map<String, Object> joinTable = (Map<String, Object>) JSON.parseObject(join, Map.class);
+    @SuppressWarnings("unchecked")
+    List<Object> col = (List<Object>) JSON.parseObject(column, ArrayList.class);
+    SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("test", joinTable, col, query);
+    System.out.println(sqlObjects);
+}
+// 输出
+// SqlObjects{sql='SELECT "table_a"."column1" AS "tac1", "table_a"."column2", "table_b"."column1" AS "tbc1", "table_b"."column2" AS "tbc2" FROM "test" INNER JOIN "table_d" USING ("tdc1") LEFT JOIN "table_e" LEFT JOIN "table_b" USING ("tbc1") RIGHT JOIN "table_a" USING ("tac1") FULL JOIN "table_c" USING ("tcc1") WHERE (("or12" = ? OR "or11" < ?) AND (("or3and12" = ? AND "or3and11" = ?) OR ("or3and21" = ? AND "or3and22" = ?)) AND ("or21" = ? OR "or22" = ?)) AND ("and21" != ? AND "and22" = ?) AND "update_time" > ? AND "outdate_time" BETWEEN (?,?) ORDER BY "name" ASC, "id" DESC LIMIT 12,34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}
+```
+
+```java
+public void testCount() throws Exception {
+    String select = readFile("/select.json");
+    Query query = JSON.parseObject(select, Query.class);
+    SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("tableA", query);
+    System.out.println(sqlObjects);
+}
+// 输出
+// SqlObjects{sql='SELECT COUNT(*) FROM "table_a" WHERE (("or12" = ? OR "or11" < ?) AND (("or3and12" = ? AND "or3and11" = ?) OR ("or3and21" = ? AND "or3and22" = ?)) AND ("or21" = ? OR "or22" = ?)) AND ("and21" != ? AND "and22" = ?) AND "update_time" > ? AND "outdate_time" BETWEEN (?,?) ORDER BY "name" ASC, "id" DESC LIMIT 12,34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}
+```
+
+```java
+public void testCount1() throws Exception {
+    String select = readFile("/select.json");
+    String column = readFile("/column.json");
+    String join = readFile("/join.json");
+    Query query = JSON.parseObject(select, Query.class);
+    @SuppressWarnings("unchecked")
+    Map<String, Object> joinTable = (Map<String, Object>) JSON.parseObject(join, Map.class);
+    @SuppressWarnings("unchecked")
+    List<Object> col = (List<Object>) JSON.parseObject(column, ArrayList.class);
+    SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("test", joinTable, col, query);
+    System.out.println(sqlObjects);
+}
+// 输出
+// SqlObjects{sql='SELECT COUNT("table_a"."column1" AS "tac1", "table_a"."column2", "table_b"."column1" AS "tbc1", "table_b"."column2" AS "tbc2") FROM "test" INNER JOIN "table_d" USING ("tdc1") LEFT JOIN "table_e" LEFT JOIN "table_b" USING ("tbc1") RIGHT JOIN "table_a" USING ("tac1") FULL JOIN "table_c" USING ("tcc1") WHERE (("or12" = ? OR "or11" < ?) AND (("or3and12" = ? AND "or3and11" = ?) OR ("or3and21" = ? AND "or3and22" = ?)) AND ("or21" = ? OR "or22" = ?)) AND ("and21" != ? AND "and22" = ?) AND "update_time" > ? AND "outdate_time" BETWEEN (?,?) ORDER BY "name" ASC, "id" DESC LIMIT 12,34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}
 ```
