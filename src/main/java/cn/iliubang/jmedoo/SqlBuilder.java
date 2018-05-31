@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,9 +74,53 @@ public class SqlBuilder {
     }
 
     public SqlObjects buildSelect(String tableName, Map<String, Object> joinTable, List<Object> column, Query query) {
-        StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder("SELECT ");
         SqlObjects sqlObjects = new SqlObjects();
         sql.append(ParserFactory.getColumnParser().parse(null, column)).append("FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
+        if (null != joinTable) {
+            sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
+        }
+        if (null != query) {
+            ArrayList<Object> lists = new ArrayList<>();
+            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
+                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
+                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
+                        {
+                            put("limit", query.getLimit());
+                        }
+                    }, lists));
+            sqlObjects.setObjects(lists.toArray());
+        }
+        sqlObjects.setSql(sql.toString().trim());
+
+        return sqlObjects;
+    }
+
+    public SqlObjects buildCount(String tableName, Query query) throws SqlParseException {
+        StringBuilder sql = new StringBuilder();
+        SqlObjects sqlObjects = new SqlObjects();
+        sql.append("SELECT COUNT(*) FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
+        if (null != query) {
+            ArrayList<Object> lists = new ArrayList<>();
+            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
+                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
+                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
+                        {
+                            put("limit", query.getLimit());
+                        }
+                    }, lists));
+            sqlObjects.setObjects(lists.toArray());
+        }
+
+        sqlObjects.setSql(sql.toString().trim());
+
+        return sqlObjects;
+    }
+
+    public SqlObjects buildCount(String tableName, Map<String, Object> joinTable, List<Object> column, Query query) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(");
+        SqlObjects sqlObjects = new SqlObjects();
+        sql.append(ParserFactory.getColumnParser().parse(null, column).trim()).append(") FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != joinTable) {
             sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
         }

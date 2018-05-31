@@ -1,0 +1,9 @@
+{
+  "[<]tableA": "tac1",
+  "[>]tableB": "tbc1",
+  "[<>]tableC": "tcc1",
+  "[><]tableD": "tdc1",
+  "[>]tableE": [
+    "tec1", "tec2", "tec3"
+  ]
+}

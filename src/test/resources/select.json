@@ -1,0 +1,40 @@
+{
+  "where": {
+    "AND#1": {
+      "OR#1": {
+        "or11[<]": "or11",
+        "or12": "or12"
+      },
+      "OR#2": {
+        "or21": "or21",
+        "or22": "or22"
+      },
+      "OR#3": {
+        "AND#1": {
+          "or3and11": "or3and11",
+          "or3and12": "or3and12"
+        },
+        "AND#2": {
+          "or3and21": "or3and21",
+          "or3and22": "or3and22"
+        }
+      }
+    },
+    "AND#2": {
+      "and21[!]": "and21",
+      "and22": "and22"
+    },
+    "updateTime[>]": "2018-12-21 12:12:12",
+    "outdateTime[<>]": [
+      "t1", "t2"
+    ]
+  },
+  "order": {
+    "name": "ASC",
+    "id": "DESC"
+  },
+  "limit": [
+    12,
+    34
+  ]
+}

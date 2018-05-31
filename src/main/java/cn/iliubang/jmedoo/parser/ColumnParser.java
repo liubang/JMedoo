@@ -18,9 +18,9 @@ public class ColumnParser implements ParserInterface {
     @Override
     public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException {
         if (null == lists || lists.isEmpty()) {
-            return "SELECT * ";
+            return "* ";
         }
-        StringBuilder sql = new StringBuilder("SELECT ");
+        StringBuilder sql = new StringBuilder();
 
         for (Object o : lists) {
             if (o instanceof String) {
