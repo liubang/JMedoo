@@ -1,6 +1,16 @@
 # JMedoo
 Java版的Medoo查询表达式
 
+使用MySQL的话请设置
+
+```java
+# 命令行
+set SQL_MODE=ANSI_QUOTES
+# jdbc
+jdbc:mysql://host:port/db?sessionVariables=sql_mode=ANSI_QUOTES
+```
+
+
 测试代码
 
 column.
