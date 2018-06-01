@@ -68,6 +68,8 @@ public class JoinParser implements ParserInterface {
                     if (sql.toString().trim().endsWith("AND")) {
                         sql.delete(sql.lastIndexOf("AND"), sql.length());
                     }
+                } else {
+                    throw new SqlParseException("Sql parsing error.");
                 }
             }
         }
