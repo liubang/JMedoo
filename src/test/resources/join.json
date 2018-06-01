@@ -5,7 +5,7 @@
   "[><]tableD": "tdc1",
   "[>]tableE":
     {
-      "tableEc1": "masterc1",
-      "tableEc2": "masterc2"
+      "tableDc1": "tableEc1",
+      "tableDc2": "masteEc2"
     }
 }

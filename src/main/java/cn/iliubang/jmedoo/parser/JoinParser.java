@@ -27,6 +27,8 @@ public class JoinParser implements ParserInterface {
 
         StringBuilder sql = new StringBuilder();
 
+        String primaryTable = null;
+
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
@@ -52,8 +54,9 @@ public class JoinParser implements ParserInterface {
                     if (null == objects || objects.length == 0) {
                         throw new SqlParseException("Sql parsing error.");
                     }
-                    @SuppressWarnings("unchecked")
-                    String primaryTable = StringUtil.camel2Underline((String) objects[0]);
+                    if (null == primaryTable) {
+                        primaryTable = StringUtil.camel2Underline((String) objects[0]);
+                    }
                     @SuppressWarnings("unchecked")
                     Map<String, String> mapVal = (Map<String, String>) val;
                     sql.append("ON ");
@@ -71,6 +74,7 @@ public class JoinParser implements ParserInterface {
                 } else {
                     throw new SqlParseException("Sql parsing error.");
                 }
+                primaryTable = realTable;
             }
         }
 
