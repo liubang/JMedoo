@@ -31,7 +31,7 @@ public class OrderParser implements ParserInterface {
         }
 
         if (sql.length() > 0) {
-            sql.deleteCharAt(sql.lastIndexOf(",")).insert(0, " ORDER BY ");
+            sql.deleteCharAt(sql.lastIndexOf(",")).insert(0, "ORDER BY ");
         }
 
         return sql.toString();

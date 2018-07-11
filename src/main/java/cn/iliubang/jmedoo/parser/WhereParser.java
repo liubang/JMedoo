@@ -53,7 +53,7 @@ public class WhereParser implements ParserInterface {
         }
 
         if (sql.length() > 0) {
-            sql.insert(0, "WHERE ");
+            sql.insert(0, "WHERE ").append(" ");
         }
 
         return sql.toString();
