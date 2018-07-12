@@ -93,4 +93,12 @@ public class TestBuilder {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
         Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" LIMIT 1, 20', objects=[]}", sqlObjects.toString());
     }
+
+    @Test
+    public void testLike() throws Exception {
+        String like = readFile("/like.json");
+        Query query = JSON.parseObject(like, Query.class);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE %?% AND \"ccc\" NOT LIKE %?%', objects=[bbb, ddd]}", sqlObjects.toString());
+    }
 }
