@@ -99,6 +99,6 @@ public class TestBuilder {
         String like = readFile("/like.json");
         Query query = JSON.parseObject(like, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
-        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE %?% AND \"ccc\" NOT LIKE %?%', objects=[bbb, ddd]}", sqlObjects.toString());
+        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE '%' ? '%' AND \"ccc\" NOT LIKE '%' ? '%'', objects=[bbb, ddd]}", sqlObjects.toString());
     }
 }

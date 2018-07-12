@@ -76,9 +76,9 @@ public class AndParser implements ParserInterface {
                 } else if (op.equals("[!]")) {
                     sql.append("\" != ? AND ");
                 } else if (op.equals("[~]")) {
-                    sql.append("\" LIKE %?% AND ");
+                    sql.append("\" LIKE '%' ? '%' AND ");
                 } else if (op.equals("[!~]")) {
-                    sql.append("\" NOT LIKE %?% AND ");
+                    sql.append("\" NOT LIKE '%' ? '%' AND ");
                 } else if (op.equals("[<>]")) {
                     sql.append("\" BETWEEN ");
                     isBetween = true;

@@ -75,9 +75,9 @@ public class OrParser implements ParserInterface {
                 } else if (op.equals("[!]")) {
                     sql.append("\" != ? OR ");
                 } else if (op.equals("[~]")) {
-                    sql.append("\" LIKE %?% OR ");
+                    sql.append("\" LIKE '%' ? '%' OR ");
                 } else if (op.equals("[!~]")) {
-                    sql.append("\" NOT LIKE %?% OR ");
+                    sql.append("\" NOT LIKE '%' ? '%' OR ");
                 } else if (op.equals("[<>]")) {
                     sql.append("\" BETWEEN ");
                     isBetween = true;
