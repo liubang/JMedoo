@@ -1,0 +1,12 @@
+{
+  "where": {
+    "AND": {
+      "aaa[~]": "bbb",
+      "ccc[~]": ["ddd", "eee", "fff"]
+    },
+    "OR": {
+      "oaaa[~]": "bbb",
+      "occc[~]": ["ddd", "eee", "fff"]
+    }
+  }
+}

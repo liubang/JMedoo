@@ -4,7 +4,6 @@ import cn.iliubang.jmedoo.ParserFactory;
 import cn.iliubang.jmedoo.exception.SqlParseException;
 import cn.iliubang.jmedoo.util.StringUtil;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,46 +50,60 @@ public class AndParser implements ParserInterface {
             String key = entry.getKey();
             Object val = entry.getValue();
             boolean isBetween = false;
+            boolean isLike = false;
+            String realK;
+            // 是否用到了特殊条件
             boolean isEndWith = key.endsWith("]");
             if (isEndWith) {
                 int index = key.lastIndexOf("[");
                 String op = key.substring(index);
-                String realK = key.substring(0, index);
+                realK = key.substring(0, index);
 
                 int indexCa = -1;
                 if ((indexCa = realK.indexOf(".")) > 0) {
                     String table = StringUtil.camel2Underline(realK.substring(0, indexCa));
                     realK = StringUtil.camel2Underline(realK.substring(indexCa + 1));
-                    sql.append("\"").append(table).append("\".\"").append(realK);
+                    realK = "\"" + table + "\".\"" + realK + "\"";
+                    //sql.append("\"").append(table).append("\".\"").append(realK);
                 } else {
-                    sql.append("\"").append(StringUtil.camel2Underline(realK));
+                    //sql.append("\"").append(StringUtil.camel2Underline(realK));
+                    realK = "\"" + StringUtil.camel2Underline(realK) + "\"";
                 }
 
+                sql.append(realK);
+
                 if (op.equals("[>]")) {
-                    sql.append("\" > ? AND ");
+                    sql.append(" > ? AND ");
                 } else if (op.equals("[<]")) {
-                    sql.append("\" < ? AND ");
+                    sql.append(" < ? AND ");
                 } else if (op.equals("[<=]")) {
-                    sql.append("\" <= ? AND ");
+                    sql.append(" <= ? AND ");
                 } else if (op.equals("[>=]")) {
-                    sql.append("\" >= ? AND ");
+                    sql.append(" >= ? AND ");
                 } else if (op.equals("[!]")) {
-                    sql.append("\" != ? AND ");
+                    sql.append(" != ? AND ");
                 } else if (op.equals("[<>]")) {
-                    sql.append("\" BETWEEN ");
+                    sql.append(" BETWEEN ");
                     isBetween = true;
+                } else if (op.equals("[~]")) {
+                    sql.append(" like ");
+                    isLike = true;
                 } else {
                     throw new SqlParseException("Sql parsing error.");
                 }
             } else {
                 int indexCa = -1;
+
                 if ((indexCa = key.indexOf(".")) > 0) {
                     String table = StringUtil.camel2Underline(key.substring(0, indexCa));
-                    String realK = StringUtil.camel2Underline(key.substring(indexCa + 1));
+                    realK = StringUtil.camel2Underline(key.substring(indexCa + 1));
+                    realK = "\"" + table + "\".\"" + realK + "\"";
                     sql.append("\"").append(table).append("\".\"").append(realK);
                 } else {
-                    sql.append("\"").append(StringUtil.camel2Underline(key));
+                    //sql.append("\"").append(StringUtil.camel2Underline(key)).append();
+                    realK = "\"" + StringUtil.camel2Underline(key) + "\"";
                 }
+                sql.append(realK);
             }
 
             if (isBetween && !(val instanceof List)) {
@@ -98,22 +111,33 @@ public class AndParser implements ParserInterface {
             }
 
             if (val instanceof List) {
-                if (isBetween) {
-                    if (((List) val).size() > 2) {
-                        throw new SqlParseException("Sql parsing error.");
+                if (isLike) {
+                    for (Object o : (List) val) {
+                        sql.append("%?%, OR ").append(realK).append(" LIKE ");
+                        lists.add(o);
                     }
-                    sql.append("(");
+                    sql.delete(sql.lastIndexOf(","), sql.length()).append(" AND ");
                 } else {
-                    sql.append("\" IN (");
-                }
+                    if (isBetween) {
+                        if (((List) val).size() > 2) {
+                            throw new SqlParseException("Sql parsing error.");
+                        }
+                        sql.append("(");
+                    } else {
+                        sql.append(" IN (");
+                    }
 
-                for (Object o : (List) val) {
-                    sql.append("?,");
-                    lists.add(o);
+                    for (Object o : (List) val) {
+                        sql.append("?,");
+                        lists.add(o);
+                    }
+                    sql.deleteCharAt(sql.lastIndexOf(",")).append(") AND ");
                 }
-                sql.deleteCharAt(sql.lastIndexOf(",")).append(") AND ");
+            } else if (isLike) {
+                sql.append("%?% AND ");
+                lists.add(val);
             } else if (!isEndWith) {
-                sql.append("\" = ? AND ");
+                sql.append(" = ? AND ");
                 lists.add(val);
             } else {
                 lists.add(val);
