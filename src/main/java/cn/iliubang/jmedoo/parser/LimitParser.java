@@ -28,7 +28,7 @@ public class LimitParser implements ParserInterface {
 
         int s = listLimit.size();
 
-        if (s > 2 || (s == 2 && listLimit.get(0) > listLimit.get(1))) {
+        if (s > 2) {
             throw new SqlParseException("Sql parsing error.");
         }
 
