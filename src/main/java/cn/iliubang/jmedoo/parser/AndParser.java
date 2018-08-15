@@ -21,7 +21,6 @@ public class AndParser implements ParserInterface {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
-
         StringBuilder sql = new StringBuilder();
         Map<String, Object> andMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
@@ -82,8 +81,11 @@ public class AndParser implements ParserInterface {
                 } else if (op.equals("[>=]")) {
                     sql.append(" >= ? AND ");
                 } else if (op.equals("[!]")) {
-                    isNot = true;
-                    // sql.append(" != ? AND ");
+                    sql.append("\" != ? AND ");
+                } else if (op.equals("[~]")) {
+                    sql.append("\" LIKE '%' ? '%' AND ");
+                } else if (op.equals("[!~]")) {
+                    sql.append("\" NOT LIKE '%' ? '%' AND ");
                 } else if (op.equals("[<>]")) {
                     sql.append(" BETWEEN ");
                     isBetween = true;

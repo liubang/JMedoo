@@ -118,4 +118,12 @@ public class TestBuilder {
         System.out.println(sqlObjects);
         Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE (\"bbb\" IN (?,?) OR \"aaa\" NOT IN (?,?,?)), objects=[c, d, a, b, c])", sqlObjects.toString());
     }
+
+    @Test
+    public void testLike() throws Exception {
+        String like = readFile("/like.json");
+        Query query = JSON.parseObject(like, Query.class);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE '%' ? '%' AND \"ccc\" NOT LIKE '%' ? '%'', objects=[bbb, ddd]}", sqlObjects.toString());
+    }
 }
