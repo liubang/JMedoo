@@ -81,7 +81,8 @@ public class AndParser implements ParserInterface {
                 } else if (op.equals("[>=]")) {
                     sql.append(" >= ? AND ");
                 } else if (op.equals("[!]")) {
-                    sql.append("\" != ? AND ");
+                    isNot = true;
+                    // sql.append("\" != ? AND ");
                 } else if (op.equals("[~]")) {
                     sql.append("\" LIKE '%' ? '%' AND ");
                 } else if (op.equals("[!~]")) {

@@ -93,15 +93,6 @@ public class TestBuilder {
     }
 
     @Test
-    public void testLike() throws Exception {
-        String like = readFile("/like.json");
-        Query query = JSON.parseObject(like, Query.class);
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
-        System.out.println(sqlObjects);
-        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE (\"occc\" LIKE %?%, OR \"occc\" LIKE %?%, OR \"occc\" LIKE %?% OR \"oaaa\" LIKE %?%) AND (\"aaa\" like %?% AND \"ccc\" like %?%, OR \"ccc\" LIKE %?%, OR \"ccc\" LIKE %?%), objects=[ddd, eee, fff, bbb, bbb, ddd, eee, fff])", sqlObjects.toString());
-    }
-
-    @Test
     public void testOrder() throws Exception {
         String order = readFile("/order.json");
         Query query = JSON.parseObject(order, Query.class);
@@ -124,6 +115,7 @@ public class TestBuilder {
         String like = readFile("/like.json");
         Query query = JSON.parseObject(like, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
-        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE '%' ? '%' AND \"ccc\" NOT LIKE '%' ? '%'', objects=[bbb, ddd]}", sqlObjects.toString());
+        System.out.println(sqlObjects);
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE \"aaa\"\" LIKE '%' ? '%' AND \"ccc\"\" NOT LIKE '%' ? '%', objects=[bbb, ddd])", sqlObjects.toString());
     }
 }

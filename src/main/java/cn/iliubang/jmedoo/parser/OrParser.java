@@ -79,7 +79,8 @@ public class OrParser implements ParserInterface {
                 } else if (op.equals("[>=]")) {
                     sql.append(" >= ? OR ");
                 } else if (op.equals("[!]")) {
-                    sql.append("\" != ? OR ");
+                    isNot = true;
+                    // sql.append("\" != ? OR ");
                 } else if (op.equals("[~]")) {
                     sql.append("\" LIKE '%' ? '%' OR ");
                 } else if (op.equals("[!~]")) {
