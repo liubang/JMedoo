@@ -109,4 +109,13 @@ public class TestBuilder {
         System.out.println(sqlObjects);
         Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" ORDER BY \"id\" DESC, \"time\" ASC, FIELD (\"status\", ?, ?, ?, ?), objects=[3, 2, 1, 5])", sqlObjects.toString());
     }
+
+    @Test
+    public void testNotIn() throws Exception {
+        String notin = readFile("/notin.json");
+        Query query = JSON.parseObject(notin, Query.class);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        System.out.println(sqlObjects);
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE (\"bbb\" IN (?,?) OR \"aaa\" NOT IN (?,?,?)), objects=[c, d, a, b, c])", sqlObjects.toString());
+    }
 }

@@ -51,6 +51,7 @@ public class AndParser implements ParserInterface {
             Object val = entry.getValue();
             boolean isBetween = false;
             boolean isLike = false;
+            boolean isNot = false;
             String realK;
             // 是否用到了特殊条件
             boolean isEndWith = key.endsWith("]");
@@ -81,7 +82,8 @@ public class AndParser implements ParserInterface {
                 } else if (op.equals("[>=]")) {
                     sql.append(" >= ? AND ");
                 } else if (op.equals("[!]")) {
-                    sql.append(" != ? AND ");
+                    isNot = true;
+                    // sql.append(" != ? AND ");
                 } else if (op.equals("[<>]")) {
                     sql.append(" BETWEEN ");
                     isBetween = true;
@@ -118,6 +120,9 @@ public class AndParser implements ParserInterface {
                     }
                     sql.delete(sql.lastIndexOf(","), sql.length()).append(" AND ");
                 } else {
+                    if (isNot) {
+                        sql.append(" NOT");
+                    }
                     if (isBetween) {
                         if (((List) val).size() > 2) {
                             throw new SqlParseException("Sql parsing error.");
@@ -135,6 +140,9 @@ public class AndParser implements ParserInterface {
                 }
             } else if (isLike) {
                 sql.append("%?% AND ");
+                lists.add(val);
+            } else if (isNot) {
+                sql.append(" != ? AND ");
                 lists.add(val);
             } else if (!isEndWith) {
                 sql.append(" = ? AND ");

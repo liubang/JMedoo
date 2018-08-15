@@ -51,6 +51,7 @@ public class OrParser implements ParserInterface {
             String realK;
             boolean isBetween = false;
             boolean isLike = false;
+            boolean isNot = false;
             boolean isEndWith = key.endsWith("]");
             if (isEndWith) {
                 int index = key.lastIndexOf("[");
@@ -78,7 +79,8 @@ public class OrParser implements ParserInterface {
                 } else if (op.equals("[>=]")) {
                     sql.append(" >= ? OR ");
                 } else if (op.equals("[!]")) {
-                    sql.append(" != ? OR ");
+                    isNot = true;
+                    // sql.append(" != ? OR ");
                 } else if (op.equals("[<>]")) {
                     sql.append(" BETWEEN ");
                     isBetween = true;
@@ -107,6 +109,11 @@ public class OrParser implements ParserInterface {
             }
 
             if (val instanceof List) {
+
+                if (isNot) {
+                    sql.append(" NOT");
+                }
+
                 if (isLike) {
                     for (Object o : (List) val) {
                         sql.append("%?%, OR ").append(realK).append(" LIKE ");
@@ -130,6 +137,9 @@ public class OrParser implements ParserInterface {
                 }
             } else if (isLike) {
                 sql.append("%?% OR ");
+                lists.add(val);
+            } else if (isNot) {
+                sql.append(" != ? OR ");
                 lists.add(val);
             } else if (!isEndWith) {
                 sql.append(" = ? OR ");
