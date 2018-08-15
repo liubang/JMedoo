@@ -4,12 +4,14 @@ import cn.iliubang.jmedoo.annotation.Id;
 import cn.iliubang.jmedoo.entity.Query;
 import cn.iliubang.jmedoo.exception.SqlParseException;
 import cn.iliubang.jmedoo.util.StringUtil;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,33 +25,12 @@ import java.util.Map;
  */
 public class SqlBuilder {
 
+    @Getter
+    @Setter
+    @ToString
     public static class SqlObjects implements Serializable {
         private String sql;
         private Object[] objects;
-
-        public String getSql() {
-            return sql;
-        }
-
-        public void setSql(String sql) {
-            this.sql = sql;
-        }
-
-        public Object[] getObjects() {
-            return objects;
-        }
-
-        public void setObjects(Object[] objects) {
-            this.objects = objects;
-        }
-
-        @Override
-        public String toString() {
-            return "SqlObjects{" +
-                    "sql='" + sql + '\'' +
-                    ", objects=" + Arrays.toString(objects) +
-                    '}';
-        }
     }
 
     public SqlObjects buildSelect(String tableName, Query query) throws SqlParseException {

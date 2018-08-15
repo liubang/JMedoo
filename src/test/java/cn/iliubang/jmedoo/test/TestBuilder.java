@@ -41,7 +41,7 @@ public class TestBuilder {
         Query query = JSON.parseObject(select, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
         System.out.println(sqlObjects);
-        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2])", sqlObjects.toString());
     }
 
     @Test
@@ -56,8 +56,7 @@ public class TestBuilder {
         List<Object> col = (List<Object>) JSON.parseObject(column, ArrayList.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("test", joinTable, col, query);
         System.out.println(sqlObjects);
-
-        Assert.assertEquals("SqlObjects{sql='SELECT \"table_a\".\"column1\" AS \"tac1\", \"table_a\".\"column2\", \"table_b\".\"column1\" AS \"tbc1\", \"table_b\".\"column2\" AS \"tbc2\" FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT \"table_a\".\"column1\" AS \"tac1\", \"table_a\".\"column2\", \"table_b\".\"column1\" AS \"tbc1\", \"table_b\".\"column2\" AS \"tbc2\" FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2])", sqlObjects.toString());
     }
 
     @Test
@@ -66,8 +65,7 @@ public class TestBuilder {
         Query query = JSON.parseObject(select, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("tableA", query);
         System.out.println(sqlObjects);
-
-        Assert.assertEquals("SqlObjects{sql='SELECT COUNT(*) FROM \"table_a\" WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(*) FROM \"table_a\" WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2])", sqlObjects.toString());
     }
 
     @Test
@@ -82,8 +80,7 @@ public class TestBuilder {
         List<Object> col = (List<Object>) JSON.parseObject(column, ArrayList.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("test", joinTable, col, query);
         System.out.println(sqlObjects);
-
-        Assert.assertEquals("SqlObjects{sql='SELECT COUNT(\"table_a\".\"column1\" AS \"tac1\", \"table_a\".\"column2\", \"table_b\".\"column1\" AS \"tbc1\", \"table_b\".\"column2\" AS \"tbc2\") FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34', objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2]}", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(\"table_a\".\"column1\" AS \"tac1\", \"table_a\".\"column2\", \"table_b\".\"column1\" AS \"tbc1\", \"table_b\".\"column2\" AS \"tbc2\") FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"update_time\" > ? AND \"outdate_time\" BETWEEN (?,?) ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, 2018-12-21 12:12:12, t1, t2])", sqlObjects.toString());
     }
 
     @Test
@@ -91,7 +88,8 @@ public class TestBuilder {
         String limit = readFile("/limit.json");
         Query query = JSON.parseObject(limit, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
-        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" LIMIT 1, 20', objects=[]}", sqlObjects.toString());
+        System.out.println(sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" LIMIT 1, 20, objects=[])", sqlObjects.toString());
     }
 
     @Test
@@ -100,6 +98,15 @@ public class TestBuilder {
         Query query = JSON.parseObject(like, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
         System.out.println(sqlObjects);
-        Assert.assertEquals("SqlObjects{sql='SELECT * FROM \"table_a\" WHERE \"aaa\" like %?% AND \"ccc\" like %?%, OR \"ccc\" LIKE %?%, OR \"ccc\" LIKE %?%', objects=[bbb, ddd, eee, fff]}", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE (\"occc\" LIKE %?%, OR \"occc\" LIKE %?%, OR \"occc\" LIKE %?% OR \"oaaa\" LIKE %?%) AND (\"aaa\" like %?% AND \"ccc\" like %?%, OR \"ccc\" LIKE %?%, OR \"ccc\" LIKE %?%), objects=[ddd, eee, fff, bbb, bbb, ddd, eee, fff])", sqlObjects.toString());
+    }
+
+    @Test
+    public void testOrder() throws Exception {
+        String order = readFile("/order.json");
+        Query query = JSON.parseObject(order, Query.class);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        System.out.println(sqlObjects);
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" ORDER BY \"id\" DESC, \"time\" ASC, FIELD (\"status\", ?, ?, ?, ?), objects=[3, 2, 1, 5])", sqlObjects.toString());
     }
 }

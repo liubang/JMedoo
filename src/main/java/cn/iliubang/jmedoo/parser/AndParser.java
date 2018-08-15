@@ -23,7 +23,7 @@ public class AndParser implements ParserInterface {
         }
 
         StringBuilder sql = new StringBuilder();
-        Map<String, Object> andMap = new HashMap<String, Object>();
+        Map<String, Object> andMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             if (entry.getKey().equals("AND") || entry.getKey().startsWith("AND#")) {
                 Object oAnd = entry.getValue();

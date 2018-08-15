@@ -3,7 +3,6 @@ package cn.iliubang.jmedoo.parser;
 import cn.iliubang.jmedoo.exception.SqlParseException;
 import cn.iliubang.jmedoo.util.StringUtil;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,19 @@ public class OrderParser implements ParserInterface {
             Object val = entry.getValue();
             if (val instanceof String && (val.equals("ASC") || val.equals("DESC"))) {
                 sql.append("\"").append(StringUtil.camel2Underline(entry.getKey())).append("\" ").append(val).append(", ");
+            } else if (val instanceof List && !((List) val).isEmpty()) {
+                sql.append("FIELD (\"" + StringUtil.camel2Underline(entry.getKey()) + "\", ");
+                List l = (List) val;
+                int s = l.size();
+                int i = 0;
+                for (Object v : l) {
+                    lists.add(v);
+                    i++;
+                    if (i == s)
+                        sql.append("?), ");
+                    else
+                        sql.append("?, ");
+                }
             }
         }
 
