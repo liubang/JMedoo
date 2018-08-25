@@ -9,6 +9,7 @@ import cn.iliubang.jmedoo.parser.OrParser;
 import cn.iliubang.jmedoo.parser.OrderParser;
 import cn.iliubang.jmedoo.parser.ParserInterface;
 import cn.iliubang.jmedoo.parser.WhereParser;
+import lombok.Getter;
 
 /**
  * {Insert class description here}
@@ -18,39 +19,18 @@ import cn.iliubang.jmedoo.parser.WhereParser;
  * @see
  */
 public class ParserFactory {
+    @Getter
     private static final ParserInterface whereParser = new WhereParser();
+    @Getter
     private static final ParserInterface andParser = new AndParser();
+    @Getter
     private static final ParserInterface orParser = new OrParser();
+    @Getter
     private static final ParserInterface orderParser = new OrderParser();
+    @Getter
     private static final ParserInterface limitParser = new LimitParser();
+    @Getter
     private static final ParserInterface joinParser = new JoinParser();
+    @Getter
     private static final ParserInterface columnParser = new ColumnParser();
-
-    public static ParserInterface getColumnParser() {
-        return columnParser;
-    }
-
-    public static ParserInterface getWhereParser() {
-        return whereParser;
-    }
-
-    public static ParserInterface getAndParser() {
-        return andParser;
-    }
-
-    public static ParserInterface getOrParser() {
-        return orParser;
-    }
-
-    public static ParserInterface getOrderParser() {
-        return orderParser;
-    }
-
-    public static ParserInterface getLimitParser() {
-        return limitParser;
-    }
-
-    public static ParserInterface getJoinParser() {
-        return joinParser;
-    }
 }
