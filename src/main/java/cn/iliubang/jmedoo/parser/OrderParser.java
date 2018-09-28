@@ -24,8 +24,12 @@ public class OrderParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             Object val = entry.getValue();
+            String key = entry.getKey();
+            if (!orderTestPattern.matcher(key).matches()) {
+                throw new SqlParseException("Sql parsing error: bad column for ORDER operation (" + key + ")");
+            }
             if (val instanceof String && (val.equals("ASC") || val.equals("DESC"))) {
-                sql.append("\"").append(StringUtil.camel2Underline(entry.getKey())).append("\" ").append(val).append(", ");
+                sql.append("\"").append(StringUtil.camel2Underline(key)).append("\" ").append(val).append(", ");
             } else if (val instanceof List && !((List) val).isEmpty()) {
                 sql.append("FIELD (\"" + StringUtil.camel2Underline(entry.getKey()) + "\", ");
                 List l = (List) val;

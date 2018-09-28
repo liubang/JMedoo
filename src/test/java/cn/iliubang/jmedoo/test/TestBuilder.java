@@ -116,6 +116,14 @@ public class TestBuilder {
         Query query = JSON.parseObject(like, Query.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
         System.out.println(sqlObjects);
-        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE \"aaa\"\" LIKE '%' ? '%' AND \"ccc\"\" NOT LIKE '%' ? '%', objects=[bbb, ddd])", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT * FROM \"table_a\" WHERE \"aaa\" LIKE '%' ? '%' AND \"ccc\"\" NOT LIKE '%' ? '%', objects=[bbb, ddd])", sqlObjects.toString());
+    }
+
+    @Test
+    public void testWhere() throws Exception {
+        String where = readFile("/where.json");
+        Query query = JSON.parseObject(where, Query.class);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        System.out.println(sqlObjects);
     }
 }

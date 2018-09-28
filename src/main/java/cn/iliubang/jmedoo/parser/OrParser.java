@@ -47,6 +47,9 @@ public class OrParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : orMap.entrySet()) {
             String key = entry.getKey();
+            if (!keyTestPattern.matcher(key).matches()) {
+                throw new SqlParseException("Sql parsing error: bad column (" + key + ")");
+            }
             Object val = entry.getValue();
             String realK;
             boolean isBetween = false;
@@ -81,8 +84,6 @@ public class OrParser implements ParserInterface {
                 } else if (op.equals("[!]")) {
                     isNot = true;
                     // sql.append("\" != ? OR ");
-                } else if (op.equals("[~]")) {
-                    sql.append("\" LIKE '%' ? '%' OR ");
                 } else if (op.equals("[!~]")) {
                     sql.append("\" NOT LIKE '%' ? '%' OR ");
                 } else if (op.equals("[<>]")) {
@@ -92,7 +93,7 @@ public class OrParser implements ParserInterface {
                     sql.append(" LIKE ");
                     isLike = true;
                 } else {
-                    throw new SqlParseException("Sql parsing error.");
+                    throw new SqlParseException("Sql parsing error: " + objectMap);
                 }
             } else {
                 int indexCa = -1;
@@ -109,7 +110,7 @@ public class OrParser implements ParserInterface {
             }
 
             if (isBetween && !(val instanceof List)) {
-                throw new SqlParseException("Sql parsing error.");
+                throw new SqlParseException("Sql parsing error: " + objectMap);
             }
 
             if (val instanceof List) {
@@ -120,14 +121,15 @@ public class OrParser implements ParserInterface {
 
                 if (isLike) {
                     for (Object o : (List) val) {
-                        sql.append("%?%, OR ").append(realK).append(" LIKE ");
+                        sql.append("'%' ? '%', OR ").append(realK).append(" LIKE ");
                         lists.add(o);
                     }
                     sql.delete(sql.lastIndexOf(","), sql.length()).append(" OR ");
                 } else {
                     if (isBetween) {
                         if (((List) val).size() > 2)
-                            throw new SqlParseException("Sql parsing error.");
+                            throw new SqlParseException("Sql parsing error: " + objectMap);
+
                         sql.append("(");
                     } else {
                         sql.append(" IN (");

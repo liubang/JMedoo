@@ -47,6 +47,9 @@ public class AndParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : andMap.entrySet()) {
             String key = entry.getKey();
+            if (!keyTestPattern.matcher(key).matches()) {
+                throw new SqlParseException("Sql parsing error: bad column (" + key + ")");
+            }
             Object val = entry.getValue();
             boolean isBetween = false;
             boolean isLike = false;
@@ -82,19 +85,16 @@ public class AndParser implements ParserInterface {
                     sql.append(" >= ? AND ");
                 } else if (op.equals("[!]")) {
                     isNot = true;
-                    // sql.append("\" != ? AND ");
-                } else if (op.equals("[~]")) {
-                    sql.append("\" LIKE '%' ? '%' AND ");
                 } else if (op.equals("[!~]")) {
                     sql.append("\" NOT LIKE '%' ? '%' AND ");
                 } else if (op.equals("[<>]")) {
                     sql.append(" BETWEEN ");
                     isBetween = true;
                 } else if (op.equals("[~]")) {
-                    sql.append(" like ");
+                    sql.append(" LIKE ");
                     isLike = true;
                 } else {
-                    throw new SqlParseException("Sql parsing error.");
+                    throw new SqlParseException("Sql parsing error:" + objectMap);
                 }
             } else {
                 int indexCa = -1;
@@ -112,7 +112,7 @@ public class AndParser implements ParserInterface {
             }
 
             if (isBetween && !(val instanceof List)) {
-                throw new SqlParseException("Sql parsing error.");
+                throw new SqlParseException("Sql parsing error: " + objectMap);
             }
 
             if (val instanceof List) {
@@ -128,7 +128,7 @@ public class AndParser implements ParserInterface {
                     }
                     if (isBetween) {
                         if (((List) val).size() > 2) {
-                            throw new SqlParseException("Sql parsing error.");
+                            throw new SqlParseException("Sql parsing error: " + objectMap);
                         }
                         sql.append("(");
                     } else {
@@ -142,7 +142,7 @@ public class AndParser implements ParserInterface {
                     sql.deleteCharAt(sql.lastIndexOf(",")).append(") AND ");
                 }
             } else if (isLike) {
-                sql.append("%?% AND ");
+                sql.append("'%' ? '%' AND ");
                 lists.add(val);
             } else if (isNot) {
                 sql.append(" != ? AND ");

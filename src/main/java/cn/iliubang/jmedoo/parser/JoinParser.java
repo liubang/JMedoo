@@ -31,6 +31,9 @@ public class JoinParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             String key = entry.getKey();
+            if (!joinTestPattern.matcher(key).matches()) {
+                throw new SqlParseException("Sql parsing error: bad join table (" + key + ")");
+            }
             Object val = entry.getValue();
             if (key.startsWith("[")) {
                 String op = key.substring(0, key.lastIndexOf("]") + 1);
@@ -45,14 +48,14 @@ public class JoinParser implements ParserInterface {
                 } else if (op.equals("[<>]")) {
                     sql.append("FULL JOIN ");
                 } else {
-                    throw new SqlParseException("Sql parsing error.");
+                    throw new SqlParseException("Sql parsing error: " + objectMap);
                 }
                 sql.append("\"").append(realTable).append("\" ");
                 if (val instanceof String) {
                     sql.append("USING (\"").append(StringUtil.camel2Underline((String) val)).append("\") ");
                 } else if (val instanceof Map) {
                     if (null == objects || objects.length == 0) {
-                        throw new SqlParseException("Sql parsing error.");
+                        throw new SqlParseException("Sql parsing error: " + objectMap);
                     }
                     if (null == primaryTable) {
                         primaryTable = StringUtil.camel2Underline((String) objects[0]);
@@ -72,7 +75,7 @@ public class JoinParser implements ParserInterface {
                         sql.delete(sql.lastIndexOf("AND"), sql.length());
                     }
                 } else {
-                    throw new SqlParseException("Sql parsing error.");
+                    throw new SqlParseException("Sql parsing error: " + objectMap);
                 }
                 primaryTable = realTable;
             }

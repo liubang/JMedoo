@@ -29,7 +29,7 @@ public class LimitParser implements ParserInterface {
         int s = listLimit.size();
 
         if (s > 2) {
-            throw new SqlParseException("Sql parsing error.");
+            throw new SqlParseException("Sql parsing error: " + objectMap);
         }
 
         if (s == 1) {

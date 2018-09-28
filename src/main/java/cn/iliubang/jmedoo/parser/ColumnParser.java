@@ -25,11 +25,13 @@ public class ColumnParser implements ParserInterface {
         for (Object o : lists) {
             if (o instanceof String) {
                 String sO = (String) o;
+                if (!columnTestPattern.matcher(sO).matches()) {
+                    throw new SqlParseException("Sql parsing error: bad column (" + sO + ")");
+                }
                 int index = -1;
                 if ((index = sO.indexOf('.')) > 0) {
                     String table = sO.substring(0, index);
                     String column = sO.substring(index + 1);
-
                     sql.append("\"").append(StringUtil.camel2Underline(table));
                     if (column.equals("*")) {
                         sql.append("\".").append(column).append(", ");
