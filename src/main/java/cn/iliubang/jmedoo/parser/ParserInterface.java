@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @see
  */
 public interface ParserInterface {
-    String testKey = "^[a-zA-Z0-9_]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
+    String testKey = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
     String testColumn = "^[a-zA-Z0-9_\\.\\*]+(\\([a-zA-Z0-9_]+\\))?$";
     String testJoin = "^\\[(\\>|\\<|\\>\\<|\\<\\>)\\][a-zA-Z0-9_]+$";
     String testOrder = "^[a-zA-Z0-9_]+$";
