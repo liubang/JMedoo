@@ -1,6 +1,8 @@
 # JMedoo
 Java版的Medoo查询表达式
 
+[![Build Status](https://travis-ci.org/iliubang/JMedoo.svg?branch=master)](https://travis-ci.org/iliubang/JMedoo)
+
 使用MySQL的话请设置
 
 ```java
