@@ -67,9 +67,7 @@ public class AndParser implements ParserInterface {
                     String table = StringUtil.camel2Underline(realK.substring(0, indexCa));
                     realK = StringUtil.camel2Underline(realK.substring(indexCa + 1));
                     realK = "\"" + table + "\".\"" + realK + "\"";
-                    //sql.append("\"").append(table).append("\".\"").append(realK);
                 } else {
-                    //sql.append("\"").append(StringUtil.camel2Underline(realK));
                     realK = "\"" + StringUtil.camel2Underline(realK) + "\"";
                 }
 
@@ -103,9 +101,7 @@ public class AndParser implements ParserInterface {
                     String table = StringUtil.camel2Underline(key.substring(0, indexCa));
                     realK = StringUtil.camel2Underline(key.substring(indexCa + 1));
                     realK = "\"" + table + "\".\"" + realK + "\"";
-                    sql.append("\"").append(table).append("\".\"").append(realK);
                 } else {
-                    //sql.append("\"").append(StringUtil.camel2Underline(key)).append();
                     realK = "\"" + StringUtil.camel2Underline(key) + "\"";
                 }
                 sql.append(realK);
