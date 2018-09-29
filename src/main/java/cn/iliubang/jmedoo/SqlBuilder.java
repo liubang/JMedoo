@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -186,7 +187,7 @@ public class SqlBuilder {
                     sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
                     list.add(val);
                 } else {
-                    query.setWhere(new HashMap<String, Object>() {
+                    query.setWhere(new LinkedHashMap<String, Object>() {
                         {
                             put(StringUtil.camel2Underline(field.getName()), val);
                         }

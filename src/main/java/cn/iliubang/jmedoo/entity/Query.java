@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * {Insert class description here}
@@ -19,7 +18,7 @@ import java.util.Map;
 @Setter
 @ToString
 public class Query {
-    private Map<String, Object> where;
+    private LinkedHashMap<String, Object> where;
     private LinkedHashMap<String, Object> order;
     private List<Integer> limit;
 }
