@@ -123,7 +123,10 @@ public class TestBuilder {
     public void testWhere() throws Exception {
         String where = readFile("/where.json");
         Query query = JSON.parseObject(where, Query.class);
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
-        System.out.println(sqlObjects);
+        try {
+            SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect("tableA", query);
+        } catch (Exception e) {
+            Assert.assertEquals(e.getMessage(), "Sql parsing error: bad column (bizId\"=1 and \"'uid[<>])");
+        }
     }
 }
