@@ -1,8 +1,6 @@
 package cn.iliubang.jmedoo.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,9 +12,7 @@ import java.util.List;
  * @version $Revision: {Version} $ $Date: 2018/5/30 09:21 $
  * @see
  */
-@Getter
-@Setter
-@ToString
+@Data
 public class Query {
     private LinkedHashMap<String, Object> where;
     private LinkedHashMap<String, Object> order;
