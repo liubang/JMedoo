@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:liubang@staff.weibo.com">liubang</a>
+ * @author <a href="mailto:it.liubang.gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/24 14:41 $
  */
 public abstract class CurdOperator<T> {
@@ -102,26 +102,7 @@ public abstract class CurdOperator<T> {
     }
 
     public long add(T type) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsert(getTableName(entryClass), entryClass, type);
-
-        logger.info(sqlObjects.toString());
-
-        int res = jdbcTemplateMaster.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sqlObjects.getSql(), Statement.RETURN_GENERATED_KEYS);
-            int index = 0;
-            for (Object o : sqlObjects.getObjects()) {
-                index++;
-                preparedStatement.setObject(index, o);
-            }
-            return preparedStatement;
-        }, keyHolder);
-
-        if (keyHolder.getKey() != null) {
-            return keyHolder.getKey().longValue();
-        } else {
-            return res;
-        }
+        return add(type, null);
     }
 
     public List select(Query query, Map<String, String> tMap) throws SqlParseException {
