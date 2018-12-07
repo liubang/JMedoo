@@ -26,13 +26,13 @@ import java.util.Map;
 public abstract class CurdOperator<T> {
     protected JdbcTemplate jdbcTemplateMaster;
     protected JdbcTemplate jdbcTemplateSlave;
+    private final Class<T> entryClass;
 
     @SuppressWarnings("unchecked")
-    private Class<T> entryClass = (Class<T>) GenericTypeResolver.resolveTypeArgument(this.getClass(), CurdOperator.class);
-
     public CurdOperator(JdbcTemplate jdbcTemplateMaster, JdbcTemplate jdbcTemplateSlave) {
         this.jdbcTemplateMaster = jdbcTemplateMaster;
         this.jdbcTemplateSlave = jdbcTemplateSlave;
+        entryClass = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), CurdOperator.class);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(CurdOperator.class);
@@ -105,28 +105,28 @@ public abstract class CurdOperator<T> {
         return add(type, null);
     }
 
-    public List select(Query query, Map<String, String> tMap) throws SqlParseException {
+    public List<T> select(Query query, Map<String, String> tMap) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
         logger.info(sqlObjects.toString());
-        return jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<T>());
+        return jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>(entryClass));
     }
 
-    public List select(Query query) throws SqlParseException {
+    public List<T> select(Query query) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass), query);
         logger.info(sqlObjects.toString());
-        return jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<T>());
+        return jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>(entryClass));
     }
 
     public T get(Query query, Map<String, String> tMap) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
         logger.info(sqlObjects.toString());
-        return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>());
+        return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>(entryClass));
     }
 
     public T get(Query query) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass), query);
         logger.info(sqlObjects.toString());
-        return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>());
+        return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), new BeanPropertyRowMapper<>(entryClass));
     }
 
     public Long count(Query query, Map<String, String> tMap) throws SqlParseException {

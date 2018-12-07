@@ -9,11 +9,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {Insert class description here}
@@ -132,8 +128,10 @@ public class SqlBuilder {
                     field.setAccessible(true);
                     Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
                     Object val = method.invoke(type);
-                    sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\", ");
-                    list.add(val);
+                    if (null != val) { // 所有字段都是NOT NULL 约束
+                        sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\", ");
+                        list.add(val);
+                    }
                     field.setAccessible(false);
                 }
             }
@@ -155,13 +153,13 @@ public class SqlBuilder {
 
     public <T> SqlObjects buildInsert(String tableName, Class<T> tClass, T type) {
         if (null == tableName || tableName.isEmpty() || null == tClass || null == type) {
-            throw new SqlParseException("Sql parsing error.");
+            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", tClass: " + tClass + ", type: " + type);
         }
 
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
-        sqlObjects.setObjects(list.toArray());
         sqlObjects.setSql("INSERT INTO \"" + StringUtil.camel2Underline(tableName) + "\" " + beanToInsertSql(tClass, type, list));
+        sqlObjects.setObjects(list.toArray());
         return sqlObjects;
     }
 
@@ -171,6 +169,9 @@ public class SqlBuilder {
         }
         StringBuilder sql = new StringBuilder();
         Query query = new Query();
+        LinkedHashMap<String, Object> where = new LinkedHashMap<>();
+        query.setWhere(where);
+        boolean hasId = false;
         try {
             Field[] fields = tClass.getDeclaredFields();
             for (Field field : fields) {
@@ -180,17 +181,19 @@ public class SqlBuilder {
                 field.setAccessible(false);
                 // 主键不参与修改，而是作为约束条件
                 if (!field.isAnnotationPresent(Id.class) || (field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0) {
-                    sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
-                    list.add(val);
+                    if (null != val) { // 所有字段都是NOT NULL 约束
+                        sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
+                        list.add(val);
+                    }
                 } else {
-                    query.setWhere(new LinkedHashMap<String, Object>() {
-                        {
-                            put(StringUtil.camel2Underline(field.getName()), val);
-                        }
-                    });
+                    hasId = true;
+                    where.put(StringUtil.camel2Underline(field.getName()), val);
                 }
             }
 
+            if (!hasId) {
+                throw new SqlParseException("Sql parsing error: update operation must set where condition.");
+            }
             sql.deleteCharAt(sql.lastIndexOf(",")).append(ParserFactory.getWhereParser().parse(query.getWhere(), list));
 
         } catch (Exception ex) {
@@ -220,8 +223,12 @@ public class SqlBuilder {
     }
 
     public SqlObjects buildUpdate(String tableName, Map<String, Object> map, Query query) {
-        if (null == tableName || null == map || null == query || null == query.getWhere()) {
-            throw new SqlParseException("Sql parsing error.");
+        if (null == tableName || null == map || null == query) {
+            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", map: " + map + ", query: " + query);
+        }
+
+        if (null == query.getWhere() || query.getWhere().isEmpty()) {
+            throw new SqlParseException("Update operation must set where condition.");
         }
 
         SqlObjects sqlObjects = new SqlObjects();
