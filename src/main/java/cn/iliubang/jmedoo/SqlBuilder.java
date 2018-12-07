@@ -234,4 +234,21 @@ public class SqlBuilder {
         return sqlObjects;
     }
 
+    public SqlObjects buildDelete(String tableName, Query query) {
+        if (null == tableName || null == query) {
+            throw new SqlParseException("Sql parsing error: delete operation must set where condition.");
+        }
+
+        if (null == query.getWhere() || query.getWhere().isEmpty()) {
+            throw new SqlParseException("Delete operation must set where condition.");
+        }
+
+        SqlObjects sqlObjects = new SqlObjects();
+        List<Object> list = new ArrayList<>();
+        String sql = "DELETE FROM \"" + StringUtil.camel2Underline(tableName) + "\" " + ParserFactory.getWhereParser().parse(query.getWhere(), list);
+        sqlObjects.setSql(sql);
+        sqlObjects.setObjects(list.toArray());
+
+        return sqlObjects;
+    }
 }
