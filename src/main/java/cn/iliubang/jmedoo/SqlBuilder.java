@@ -4,9 +4,7 @@ import cn.iliubang.jmedoo.annotation.Id;
 import cn.iliubang.jmedoo.entity.Query;
 import cn.iliubang.jmedoo.exception.SqlParseException;
 import cn.iliubang.jmedoo.util.StringUtil;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -26,9 +24,7 @@ import java.util.Map;
  */
 public class SqlBuilder {
 
-    @Getter
-    @Setter
-    @ToString
+    @Data
     public static class SqlObjects implements Serializable {
         private String sql;
         private Object[] objects;
