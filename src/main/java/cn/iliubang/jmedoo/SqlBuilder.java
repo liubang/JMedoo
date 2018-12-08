@@ -47,10 +47,14 @@ public class SqlBuilder {
         return sqlObjects;
     }
 
-    public SqlObjects buildSelect(String tableName, Map<String, Object> joinTable, List<Object> column, Query query) {
+    public SqlObjects buildSelect(String tableName,
+                                  Map<String, Object> joinTable,
+                                  List<Object> column,
+                                  Query query) {
         StringBuilder sql = new StringBuilder("SELECT ");
         SqlObjects sqlObjects = new SqlObjects();
-        sql.append(ParserFactory.getColumnParser().parse(null, column)).append("FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
+        sql.append(ParserFactory.getColumnParser().parse(null, column)).append("FROM \"")
+                .append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != joinTable) {
             sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
         }
@@ -91,10 +95,14 @@ public class SqlBuilder {
         return sqlObjects;
     }
 
-    public SqlObjects buildCount(String tableName, Map<String, Object> joinTable, List<Object> column, Query query) {
+    public SqlObjects buildCount(String tableName,
+                                 Map<String, Object> joinTable,
+                                 List<Object> column,
+                                 Query query) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(");
         SqlObjects sqlObjects = new SqlObjects();
-        sql.append(ParserFactory.getColumnParser().parse(null, column).trim()).append(") FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
+        sql.append(ParserFactory.getColumnParser().parse(null, column).trim()).append(") FROM \"")
+                .append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != joinTable) {
             sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
         }
@@ -124,7 +132,8 @@ public class SqlBuilder {
 
             for (Field field : fields) {
                 // 排除自增ID
-                if (!field.isAnnotationPresent(Id.class) || (field.getAnnotation(Id.class).value() & Id.AUTO_INCREMENT) == 0) {
+                if (!field.isAnnotationPresent(Id.class)
+                        || (field.getAnnotation(Id.class).value() & Id.AUTO_INCREMENT) == 0) {
                     field.setAccessible(true);
                     Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
                     Object val = method.invoke(type);
@@ -153,12 +162,14 @@ public class SqlBuilder {
 
     public <T> SqlObjects buildInsert(String tableName, Class<T> tClass, T type) {
         if (null == tableName || tableName.isEmpty() || null == tClass || null == type) {
-            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", tClass: " + tClass + ", type: " + type);
+            throw new SqlParseException("Sql parsing error: tableName: "
+                    + tableName + ", tClass: " + tClass + ", type: " + type);
         }
 
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
-        sqlObjects.setSql("INSERT INTO \"" + StringUtil.camel2Underline(tableName) + "\" " + beanToInsertSql(tClass, type, list));
+        sqlObjects.setSql("INSERT INTO \"" + StringUtil.camel2Underline(tableName) + "\" "
+                + beanToInsertSql(tClass, type, list));
         sqlObjects.setObjects(list.toArray());
         return sqlObjects;
     }
@@ -180,7 +191,8 @@ public class SqlBuilder {
                 Object val = method.invoke(type);
                 field.setAccessible(false);
                 // 主键不参与修改，而是作为约束条件
-                if (!field.isAnnotationPresent(Id.class) || (field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0) {
+                if (!field.isAnnotationPresent(Id.class)
+                        || (field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0) {
                     if (null != val) { // 所有字段都是NOT NULL 约束
                         sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
                         list.add(val);
@@ -194,7 +206,8 @@ public class SqlBuilder {
             if (!hasId) {
                 throw new SqlParseException("Sql parsing error: update operation must set where condition.");
             }
-            sql.deleteCharAt(sql.lastIndexOf(",")).append(ParserFactory.getWhereParser().parse(query.getWhere(), list));
+            sql.deleteCharAt(sql.lastIndexOf(","))
+                    .append(ParserFactory.getWhereParser().parse(query.getWhere(), list));
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -216,7 +229,8 @@ public class SqlBuilder {
     public <T> SqlObjects buildUpdate(String tableName, Class<T> tClass, T type) {
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
-        sqlObjects.setSql("UPDATE \"" + StringUtil.camel2Underline(tableName) + "\" SET " + beanToUpdateSql(tClass, type, list));
+        sqlObjects.setSql("UPDATE \"" + StringUtil.camel2Underline(tableName) + "\" SET "
+                + beanToUpdateSql(tClass, type, list));
 
         sqlObjects.setObjects(list.toArray());
         return sqlObjects;
@@ -224,7 +238,8 @@ public class SqlBuilder {
 
     public SqlObjects buildUpdate(String tableName, Map<String, Object> map, Query query) {
         if (null == tableName || null == map || null == query) {
-            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", map: " + map + ", query: " + query);
+            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", map: "
+                    + map + ", query: " + query);
         }
 
         if (null == query.getWhere() || query.getWhere().isEmpty()) {
@@ -252,7 +267,8 @@ public class SqlBuilder {
 
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
-        String sql = "DELETE FROM \"" + StringUtil.camel2Underline(tableName) + "\" " + ParserFactory.getWhereParser().parse(query.getWhere(), list);
+        String sql = "DELETE FROM \"" + StringUtil.camel2Underline(tableName) + "\" "
+                + ParserFactory.getWhereParser().parse(query.getWhere(), list);
         sqlObjects.setSql(sql);
         sqlObjects.setObjects(list.toArray());
 
