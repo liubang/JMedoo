@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/29 20:49 $
- * @see
  */
 public interface ParserInterface {
     String testKey = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";

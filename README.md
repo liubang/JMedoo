@@ -3,6 +3,16 @@ Java版的Medoo查询表达式
 
 [![Build Status](https://travis-ci.org/iliubang/JMedoo.svg?branch=master)](https://travis-ci.org/iliubang/JMedoo)
 
+maven添加依赖
+
+```xml
+<dependency>
+    <groupId>cn.iliubang</groupId>
+    <artifactId>jmedoo</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 使用MySQL的话请设置
 
 ```java

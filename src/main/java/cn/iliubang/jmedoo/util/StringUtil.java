@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/30 17:12 $
- * @see
  */
 public class StringUtil {
     public static String camel2Underline(String param) {

@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/30 17:29 $
- * @see
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

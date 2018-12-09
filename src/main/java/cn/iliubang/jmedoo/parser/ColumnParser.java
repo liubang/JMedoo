@@ -11,7 +11,6 @@ import java.util.Map;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/30 11:16 $
- * @see
  */
 public class ColumnParser implements ParserInterface {
 

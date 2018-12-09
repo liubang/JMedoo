@@ -1,14 +1,7 @@
 package cn.iliubang.jmedoo;
 
 
-import cn.iliubang.jmedoo.parser.AndParser;
-import cn.iliubang.jmedoo.parser.ColumnParser;
-import cn.iliubang.jmedoo.parser.JoinParser;
-import cn.iliubang.jmedoo.parser.LimitParser;
-import cn.iliubang.jmedoo.parser.OrParser;
-import cn.iliubang.jmedoo.parser.OrderParser;
-import cn.iliubang.jmedoo.parser.ParserInterface;
-import cn.iliubang.jmedoo.parser.WhereParser;
+import cn.iliubang.jmedoo.parser.*;
 import lombok.Getter;
 
 /**
@@ -16,7 +9,6 @@ import lombok.Getter;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/29 21:03 $
- * @see
  */
 public class ParserFactory {
     @Getter

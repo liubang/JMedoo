@@ -5,7 +5,6 @@ package cn.iliubang.jmedoo.sharding;
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/12/7 18:51 $
- * @see
  */
 public interface ShardingStrategyInterface {
     public String sharding(String... args);
