@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * {Insert class description here}
  *
- * @author <a href="mailto:liubang@staff.weibo.com">liubang</a>
+ * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/30 17:12 $
  * @see
  */
