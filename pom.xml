@@ -8,6 +8,34 @@
     <artifactId>jmedoo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <description>A simple SQL Builder for java</description>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>liubang</name>
+            <email>it.liubang@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/iliubang/JMedoo.git</connection>
+        <developerConnection>scm:git:https://github.com/iliubang/JMedoo.git</developerConnection>
+        <url>https://github.com/iliubang/JMedoo</url>
+    </scm>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+    </properties>
+
     <profiles>
         <profile>
             <id>jdk18</id>
@@ -15,11 +43,6 @@
                 <activeByDefault>true</activeByDefault>
                 <jdk>1.8</jdk>
             </activation>
-            <properties>
-                <maven.compiler.source>1.8</maven.compiler.source>
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-            </properties>
         </profile>
     </profiles>
 
