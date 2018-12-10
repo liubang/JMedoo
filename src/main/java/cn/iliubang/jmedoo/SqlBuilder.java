@@ -192,7 +192,8 @@ public class SqlBuilder {
                 // 主键不参与修改，而是作为约束条件
                 if (!field.isAnnotationPresent(Id.class)
                         || (field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0) {
-                    if (null != val) { // 所有字段都是NOT NULL 约束
+                    if (null != val) {
+                        // 所有字段都是NOT NULL 约束
                         sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
                         list.add(val);
                     }

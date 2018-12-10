@@ -26,7 +26,7 @@ import java.util.Map;
 public abstract class CurdOperator<T> {
     protected JdbcTemplate jdbcTemplateMaster;
     protected JdbcTemplate jdbcTemplateSlave;
-    private final Class<T> entryClass;
+    protected final Class<T> entryClass;
 
     @SuppressWarnings("unchecked")
     public CurdOperator(JdbcTemplate jdbcTemplateMaster, JdbcTemplate jdbcTemplateSlave) {
