@@ -16,7 +16,8 @@ import java.util.Map;
 public class WhereParser implements ParserInterface {
 
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
+            throws SqlParseException {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }

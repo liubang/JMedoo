@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
  * @version $Revision: {Version} $ $Date: 2018/5/29 20:49 $
  */
 public interface ParserInterface {
-    String testKey = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
-    String testColumn = "^[a-zA-Z0-9_\\.\\*]+(\\([a-zA-Z0-9_]+\\))?$";
-    String testJoin = "^\\[(\\>|\\<|\\>\\<|\\<\\>)\\][a-zA-Z0-9_]+$";
-    String testOrder = "^[a-zA-Z0-9_]+$";
+    String checkKey = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
+    String checkColumn = "^[a-zA-Z0-9_\\.\\*]+(\\([a-zA-Z0-9_]+\\))?$";
+    String checkJoin = "^\\[(\\>|\\<|\\>\\<|\\<\\>)\\][a-zA-Z0-9_]+$";
+    String checkOrder = "^[a-zA-Z0-9_]+$";
 
-    Pattern keyTestPattern = Pattern.compile(testKey);
-    Pattern columnTestPattern = Pattern.compile(testColumn);
-    Pattern joinTestPattern = Pattern.compile(testJoin);
-    Pattern orderTestPattern = Pattern.compile(testOrder);
+    Pattern keyCheckPattern = Pattern.compile(checkKey);
+    Pattern columnCheckPattern = Pattern.compile(checkColumn);
+    Pattern joinCheckPattern = Pattern.compile(checkJoin);
+    Pattern orderCheckPattern = Pattern.compile(checkOrder);
 
     String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException;
 }

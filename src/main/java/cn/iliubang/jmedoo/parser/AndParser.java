@@ -16,7 +16,8 @@ import java.util.Map;
  */
 public class AndParser implements ParserInterface {
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
+            throws SqlParseException {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
@@ -46,7 +47,7 @@ public class AndParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : andMap.entrySet()) {
             String key = entry.getKey();
-            if (!keyTestPattern.matcher(key).matches()) {
+            if (!keyCheckPattern.matcher(key).matches()) {
                 throw new SqlParseException("Sql parsing error: bad column (" + key + ")");
             }
             Object val = entry.getValue();

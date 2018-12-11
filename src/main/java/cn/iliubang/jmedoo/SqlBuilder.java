@@ -178,9 +178,8 @@ public class SqlBuilder {
             return "";
         }
         StringBuilder sql = new StringBuilder();
-        Query query = new Query();
         LinkedHashMap<String, Object> where = new LinkedHashMap<>();
-        query.setWhere(where);
+        Query query = Query.builder().where(where).build();
         boolean hasId = false;
         try {
             Field[] fields = tClass.getDeclaredFields();

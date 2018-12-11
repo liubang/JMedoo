@@ -15,7 +15,8 @@ import java.util.Map;
 public class ColumnParser implements ParserInterface {
 
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
+            throws SqlParseException {
         if (null == lists || lists.isEmpty()) {
             return "* ";
         }
@@ -24,7 +25,7 @@ public class ColumnParser implements ParserInterface {
         for (Object o : lists) {
             if (o instanceof String) {
                 String sO = (String) o;
-                if (!columnTestPattern.matcher(sO).matches()) {
+                if (!columnCheckPattern.matcher(sO).matches()) {
                     throw new SqlParseException("Sql parsing error: bad column (" + sO + ")");
                 }
                 int index = -1;
@@ -40,7 +41,8 @@ public class ColumnParser implements ParserInterface {
                             String alias = column.substring(column.indexOf("(") + 1, column.length() - 1);
                             String ccolumn = column.substring(0, column.indexOf("("));
 
-                            sql.append(StringUtil.camel2Underline(ccolumn)).append("\" AS \"").append(alias).append("\", ");
+                            sql.append(StringUtil.camel2Underline(ccolumn)).append("\" AS \"").append(alias)
+                                    .append("\", ");
 
                         } else {
                             sql.append(StringUtil.camel2Underline(column)).append("\", ");

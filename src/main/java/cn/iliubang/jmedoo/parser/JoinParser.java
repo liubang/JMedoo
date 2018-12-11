@@ -19,7 +19,8 @@ public class JoinParser implements ParserInterface {
     // [<>] == FULL JOIN
     // [><] == INNER JOIN
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
+            throws SqlParseException {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
@@ -30,7 +31,7 @@ public class JoinParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             String key = entry.getKey();
-            if (!joinTestPattern.matcher(key).matches()) {
+            if (!joinCheckPattern.matcher(key).matches()) {
                 throw new SqlParseException("Sql parsing error: bad join table (" + key + ")");
             }
             Object val = entry.getValue();
