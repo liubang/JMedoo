@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
 public @interface Id {
     long PRIMARY = 1 << 0;
     long AUTO_INCREMENT = 1 << 1;
+    long UNIQUE = 1 << 2;
+    long INDEX = 1 << 3;
 
     long value() default PRIMARY | AUTO_INCREMENT;
 }

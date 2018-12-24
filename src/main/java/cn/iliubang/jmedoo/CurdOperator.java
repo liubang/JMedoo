@@ -106,6 +106,37 @@ public abstract class CurdOperator<T> {
         return add(type, null);
     }
 
+    public long insertForUpdate(T type, Map<String, String> tMap) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsertForUpdate(getTableName(entryClass, tMap),
+                entryClass, type);
+
+        logger.info(sqlObjects.toString());
+
+        int res = jdbcTemplateMaster.update(con -> {
+            PreparedStatement preparedStatement = con.prepareStatement(sqlObjects.getSql(),
+                    Statement.RETURN_GENERATED_KEYS);
+            int index = 0;
+            for (Object o : sqlObjects.getObjects()) {
+                index++;
+                preparedStatement.setObject(index, o);
+            }
+            return preparedStatement;
+        }, keyHolder);
+
+        if (res == 1) {
+            if (keyHolder.getKey() != null) {
+                return keyHolder.getKey().longValue();
+            }
+        }
+
+        return res;
+    }
+
+    public long insertForUpdate(T type) {
+        return insertForUpdate(type, null);
+    }
+
     public Optional<List<T>> select(Query query, Map<String, String> tMap) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
         logger.info(sqlObjects.toString());

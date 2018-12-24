@@ -2,6 +2,7 @@ package cn.iliubang.jmedoo.test;
 
 import cn.iliubang.jmedoo.SqlBuilder;
 import cn.iliubang.jmedoo.entity.Query;
+import cn.iliubang.jmedoo.test.entity.User;
 import com.alibaba.fastjson.JSON;
 import org.junit.Assert;
 import org.junit.Test;
@@ -128,5 +129,16 @@ public class TestBuilder {
         } catch (Exception e) {
             Assert.assertEquals(e.getMessage(), "Sql parsing error: bad column (bizId\"=1 and \"'uid[<>])");
         }
+    }
+
+    @Test
+    public void testInsert4Update() {
+        User user = new User();
+        user.setUid(1);
+        user.setUname("liubang");
+        user.setDesc("a good man!");
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsertForUpdate("user", User.class, user);
+        System.out.println(sqlObjects);
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=INSERT INTO \"user\" (\"uname\", \"desc\" ) VALUES (?,?)  ON DUPLICATE KEY UPDATE \"uname\" = ?, \"desc\" = ? , objects=[liubang, a good man!, liubang, a good man!])", sqlObjects.toString());
     }
 }

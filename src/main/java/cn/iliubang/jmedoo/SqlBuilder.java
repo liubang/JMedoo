@@ -215,6 +215,60 @@ public class SqlBuilder {
         return sql.toString();
     }
 
+    public <T> SqlObjects buildInsertForUpdate(String tableName, Class<T> tClass, T type) {
+        if (null == tableName || tableName.isEmpty() || null == tClass || null == type) {
+            throw new SqlParseException("Sql parsing error: tableName: " + tableName + ", tClass: "
+                    + tClass + ", type: " + type);
+        }
+
+        SqlObjects sqlObjects = new SqlObjects();
+        List<Object> list = new ArrayList<>();
+        sqlObjects.setSql("INSERT INTO \"" + StringUtil.camel2Underline(tableName) + "\" "
+                + beanToInsertSql(tClass, type, list) + " ON DUPLICATE KEY UPDATE "
+                + beanToInsertForUpdateSql(tClass, type, list));
+
+        sqlObjects.setObjects(list.toArray());
+        return sqlObjects;
+    }
+
+    private <T> String beanToInsertForUpdateSql(Class<T> tClass, T type, List<Object> list) {
+        if (null == tClass || null == type) {
+            return "";
+        }
+        StringBuilder sql = new StringBuilder();
+        boolean hasId = false;
+        try {
+            Field[] fields = tClass.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
+                Object val = method.invoke(type);
+                field.setAccessible(false);
+                // 主键和UNIQUE不参与修改
+                if (!field.isAnnotationPresent(Id.class)
+                        || ((field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0
+                        && (field.getAnnotation(Id.class).value() & Id.UNIQUE) == 0)) {
+                    if (null != val) { // 所有字段都是NOT NULL 约束
+                        sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
+                        list.add(val);
+                    }
+                } else {
+                    hasId = true;
+                }
+            }
+
+            if (!hasId) {
+                throw new SqlParseException("Sql parsing error: 'ON DUPLICATE KEY UPDATE' operation must have primary key or unique key.");
+            }
+            sql.deleteCharAt(sql.lastIndexOf(","));
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return sql.toString();
+    }
+
     private String mapToUpdateSql(Map<String, Object> map, List<Object> list) {
         StringBuilder sql = new StringBuilder();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
