@@ -77,9 +77,9 @@ public abstract class CurdOperator<T> {
         }
     }
 
-    public long add(T type, Map<String, String> tMap) {
+    public long add(T type, Map<String, String> shardingKeys) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsert(getTableName(entryClass, tMap),
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsert(getTableName(entryClass, shardingKeys),
                 entryClass, type);
 
         logger.info(sqlObjects.toString());
@@ -106,8 +106,8 @@ public abstract class CurdOperator<T> {
         return add(type, null);
     }
 
-    public Optional<List<T>> select(Query query, Map<String, String> tMap) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
+    public Optional<List<T>> select(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         List<T> tList = jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(),
                 new BeanPropertyRowMapper<>(entryClass));
@@ -119,19 +119,11 @@ public abstract class CurdOperator<T> {
     }
 
     public Optional<List<T>> select(Query query) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass), query);
-        logger.info(sqlObjects.toString());
-        List<T> tList = jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(),
-                new BeanPropertyRowMapper<>(entryClass));
-        if (null == tList || tList.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(tList);
-        }
+        return select(query, null);
     }
 
-    public Optional<T> get(Query query, Map<String, String> tMap) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
+    public Optional<T> get(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         try {
             T t = jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(),
@@ -144,73 +136,52 @@ public abstract class CurdOperator<T> {
     }
 
     public Optional<T> get(Query query) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass), query);
-        logger.info(sqlObjects.toString());
-        try {
-            T t = jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(),
-                    new BeanPropertyRowMapper<>(entryClass));
-            return Optional.of(t);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return get(query, null);
     }
 
-    public Long count(Query query, Map<String, String> tMap) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount(getTableName(entryClass, tMap), query);
+    public long count(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         Long co = jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), Long.class);
         if (null == co) {
-            return 0L;
+            return 0;
         } else {
             return co;
         }
     }
 
-    public Long count(Query query) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount(getTableName(entryClass), query);
-        logger.info(sqlObjects.toString());
-        Long co = jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), Long.class);
-        if (null == co) {
-            return 0L;
-        } else {
-            return co;
-        }
+    public long count(Query query) throws SqlParseException {
+        return count(query, null);
     }
 
     public int update(T type) {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass), entryClass, type);
-        logger.info(sqlObjects.toString());
-        return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
+        return update(type, null);
     }
 
-    public int update(T type, Map<String, String> tMap) {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass, tMap),
+    public int update(T type, Map<String, String> shardingKeys) {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass, shardingKeys),
                 entryClass, type);
         logger.info(sqlObjects.toString());
         return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
     }
 
-    public int update(String sql, Object[] objects) {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder.SqlObjects();
-        sqlObjects.setSql(sql);
-        sqlObjects.setObjects(objects);
-        logger.info(sqlObjects.toString());
-        return jdbcTemplateMaster.update(sql, objects);
+    public int update(Map<String, Object> updateData, Query query) throws SqlParseException {
+        return update(updateData, query, null);
     }
 
-    public int update(String table, Map<String, Object> updateData, Query query) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(table, updateData, query);
+    public int update(Map<String, Object> updateData, Query query, Map<String, String> shardingKeys) throws SqlParseException {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass, shardingKeys), updateData, query);
         logger.info(sqlObjects.toString());
         return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
     }
 
-    public int delete(String table, Query query) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildDelete(table, query);
+    public int delete(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildDelete(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
     }
 
-    public int delete(Map<String, String> tMap, Query query) {
-        return delete(getTableName(entryClass, tMap), query);
+    public int delete(Query query) {
+        return delete(query, null);
     }
 }
