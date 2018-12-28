@@ -106,10 +106,9 @@ public abstract class CurdOperator<T> {
         return add(type, null);
     }
 
-<<<<<<< HEAD
-    public long insertForUpdate(T type, Map<String, String> tMap) {
+    public long insertForUpdate(T type, Map<String, String> shardingKeys) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsertForUpdate(getTableName(entryClass, tMap),
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsertForUpdate(getTableName(entryClass, shardingKeys),
                 entryClass, type);
 
         logger.info(sqlObjects.toString());
@@ -138,12 +137,9 @@ public abstract class CurdOperator<T> {
         return insertForUpdate(type, null);
     }
 
-    public Optional<List<T>> select(Query query, Map<String, String> tMap) throws SqlParseException {
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, tMap), query);
-=======
+
     public Optional<List<T>> select(Query query, Map<String, String> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, shardingKeys), query);
->>>>>>> ec9a25e0c96b445c6cebc0f5790cfa607c572009
         logger.info(sqlObjects.toString());
         List<T> tList = jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(),
                 new BeanPropertyRowMapper<>(entryClass));
