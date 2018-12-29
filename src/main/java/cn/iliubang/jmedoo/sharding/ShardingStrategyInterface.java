@@ -1,5 +1,7 @@
 package cn.iliubang.jmedoo.sharding;
 
+import java.util.Map;
+
 /**
  * {Insert class description here}
  *
@@ -7,5 +9,5 @@ package cn.iliubang.jmedoo.sharding;
  * @version $Revision: {Version} $ $Date: 2018/12/7 18:51 $
  */
 public interface ShardingStrategyInterface {
-    public String sharding(String... args);
+    String sharding(Map<String, Object> shardingKeys);
 }

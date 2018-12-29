@@ -15,7 +15,11 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:it.liubang.gmail.com">liubang</a>
@@ -39,7 +43,7 @@ public abstract class CurdOperator<T> {
         return getTableName(clazz, null);
     }
 
-    public static String getTableName(Class<?> clazz, Map<String, String> map) {
+    public static String getTableName(Class<?> clazz, Map<String, Object> map) {
         if (!clazz.isAnnotationPresent(Table.class)) {
             throw new RuntimeException("Table annotation is not defined.");
         }
@@ -51,7 +55,7 @@ public abstract class CurdOperator<T> {
         Class<? extends ShardingStrategyInterface> strageClazz = table.shardingStrategy();
 
         if (!strageClazz.isInterface()) {
-            List<String> list = new ArrayList<>();
+            Map<String, Object> filtedKeyMap = new HashMap<>();
             if (keys.length > 0) {
                 if (null == map || map.isEmpty()) {
                     throw new RuntimeException("Map should contain all keys of " + Arrays.toString(keys)
@@ -59,16 +63,14 @@ public abstract class CurdOperator<T> {
                 }
                 for (String key : keys) {
                     if (map.containsKey(key)) {
-                        list.add(map.get(key));
+                        filtedKeyMap.put(key, map.get(key));
                     } else {
                         throw new RuntimeException("Map must contain all keys of " + Arrays.toString(keys));
                     }
                 }
             }
-            String[] strings = new String[list.size()];
-            list.toArray(strings);
             try {
-                return tableName + table.separator() + strageClazz.newInstance().sharding(strings);
+                return tableName + table.separator() + strageClazz.newInstance().sharding(filtedKeyMap);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -77,7 +79,7 @@ public abstract class CurdOperator<T> {
         }
     }
 
-    public long add(T type, Map<String, String> shardingKeys) {
+    public long add(T type, Map<String, Object> shardingKeys) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsert(getTableName(entryClass, shardingKeys),
                 entryClass, type);
@@ -106,7 +108,7 @@ public abstract class CurdOperator<T> {
         return add(type, null);
     }
 
-    public long insertForUpdate(T type, Map<String, String> shardingKeys) {
+    public long insertForUpdate(T type, Map<String, Object> shardingKeys) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildInsertForUpdate(getTableName(entryClass, shardingKeys),
                 entryClass, type);
@@ -138,7 +140,7 @@ public abstract class CurdOperator<T> {
     }
 
 
-    public Optional<List<T>> select(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+    public Optional<List<T>> select(Query query, Map<String, Object> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         List<T> tList = jdbcTemplateSlave.query(sqlObjects.getSql(), sqlObjects.getObjects(),
@@ -154,7 +156,7 @@ public abstract class CurdOperator<T> {
         return select(query, null);
     }
 
-    public Optional<T> get(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+    public Optional<T> get(Query query, Map<String, Object> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildSelect(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         try {
@@ -171,7 +173,7 @@ public abstract class CurdOperator<T> {
         return get(query, null);
     }
 
-    public long count(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+    public long count(Query query, Map<String, Object> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         Long co = jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), Long.class);
@@ -190,7 +192,7 @@ public abstract class CurdOperator<T> {
         return update(type, null);
     }
 
-    public int update(T type, Map<String, String> shardingKeys) {
+    public int update(T type, Map<String, Object> shardingKeys) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass, shardingKeys),
                 entryClass, type);
         logger.info(sqlObjects.toString());
@@ -201,13 +203,13 @@ public abstract class CurdOperator<T> {
         return update(updateData, query, null);
     }
 
-    public int update(Map<String, Object> updateData, Query query, Map<String, String> shardingKeys) throws SqlParseException {
+    public int update(Map<String, Object> updateData, Query query, Map<String, Object> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildUpdate(getTableName(entryClass, shardingKeys), updateData, query);
         logger.info(sqlObjects.toString());
         return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
     }
 
-    public int delete(Query query, Map<String, String> shardingKeys) throws SqlParseException {
+    public int delete(Query query, Map<String, Object> shardingKeys) throws SqlParseException {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildDelete(getTableName(entryClass, shardingKeys), query);
         logger.info(sqlObjects.toString());
         return jdbcTemplateMaster.update(sqlObjects.getSql(), sqlObjects.getObjects());
