@@ -21,13 +21,5 @@ public interface ParserInterface {
     Pattern JOIN_CHECK_PATTERN = Pattern.compile(CHECK_JOIN);
     Pattern ORDER_CHECK_PATTERN = Pattern.compile(CHECK_ORDER);
 
-    /**
-     * parse query syntax.
-     *
-     * @param objectMap
-     * @param lists
-     * @param objects
-     * @return String
-     */
     String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects);
 }
