@@ -127,6 +127,9 @@ public class SqlBuilder {
             Field[] fields = tClass.getDeclaredFields();
 
             for (Field field : fields) {
+                if (field.isSynthetic()) {
+                    continue;
+                }
                 // 排除自增ID
                 if (!field.isAnnotationPresent(Id.class)
                         || (field.getAnnotation(Id.class).value() & Id.AUTO_INCREMENT) == 0) {
@@ -182,6 +185,9 @@ public class SqlBuilder {
         try {
             Field[] fields = tClass.getDeclaredFields();
             for (Field field : fields) {
+                if (field.isSynthetic()) {
+                    continue;
+                }
                 field.setAccessible(true);
                 Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
                 Object val = method.invoke(type);
@@ -240,6 +246,9 @@ public class SqlBuilder {
         try {
             Field[] fields = tClass.getDeclaredFields();
             for (Field field : fields) {
+                if (field.isSynthetic()) {
+                    continue;
+                }
                 field.setAccessible(true);
                 Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
                 Object val = method.invoke(type);
