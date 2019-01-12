@@ -14,10 +14,18 @@ import java.util.Map;
  */
 public class JoinParser implements ParserInterface {
 
-    // [>] == LEFT JOIN
-    // [<] == RIGHT JOIN
-    // [<>] == FULL JOIN
-    // [><] == INNER JOIN
+    /**
+     * [>] == LEFT JOIN
+     * [<] == RIGHT JOIN
+     * [<>] == FULL JOIN
+     * [><] == INNER JOIN
+     *
+     * @param objectMap 表达式规则
+     * @param lists     参数
+     * @param objects   额外参数
+     * @return
+     * @throws SqlParseException
+     */
     @Override
     public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {

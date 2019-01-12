@@ -13,7 +13,6 @@ import java.util.Map;
  * @version $Revision: {Version} $ $Date: 2018/5/29 20:50 $
  */
 public class OrderParser implements ParserInterface {
-    @Override
     public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
@@ -27,8 +26,11 @@ public class OrderParser implements ParserInterface {
             if (!ORDER_CHECK_PATTERN.matcher(key).matches()) {
                 throw new SqlParseException("Sql parsing error: bad column for ORDER operation (" + key + ")");
             }
-            if (val instanceof String && (val.equals("ASC") || val.equals("DESC"))) {
-                sql.append("\"").append(StringUtil.camel2Underline(key)).append("\" ").append(val).append(", ");
+            if (val instanceof String) {
+                String st = ((String) val).toUpperCase();
+                if ("ASC".equals(st) || "DESC".equals(st)) {
+                    sql.append("\"").append(StringUtil.camel2Underline(key)).append("\" ").append(st).append(", ");
+                }
             } else if (val instanceof List && !((List) val).isEmpty()) {
                 sql.append("FIELD (\"" + StringUtil.camel2Underline(entry.getKey()) + "\", ");
                 List l = (List) val;
@@ -37,10 +39,11 @@ public class OrderParser implements ParserInterface {
                 for (Object v : l) {
                     lists.add(v);
                     i++;
-                    if (i == s)
+                    if (i == s) {
                         sql.append("?), ");
-                    else
+                    } else {
                         sql.append("?, ");
+                    }
                 }
             }
         }
