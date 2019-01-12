@@ -28,7 +28,7 @@ public class AndParser implements ParserInterface {
                 if (oAnd instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tAnd = (Map<String, Object>) entry.getValue();
-                    sql.append("(").append(ParserFactory.getAND_PARSER().parse(tAnd, lists)).append(") AND ");
+                    sql.append("(").append(ParserFactory.AND_PARSER.parse(tAnd, lists)).append(") AND ");
                 }
             } else if (entry.getKey().equals("OR") || entry.getKey().startsWith("OR#")) {
                 Object oOr = entry.getValue();
@@ -36,7 +36,7 @@ public class AndParser implements ParserInterface {
                     if (oOr instanceof Map) {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> tOr = (Map<String, Object>) oOr;
-                        sql.append("(").append(ParserFactory.getOR_PARSER().parse(tOr, lists)).append(") AND ");
+                        sql.append("(").append(ParserFactory.OR_PARSER.parse(tOr, lists)).append(") AND ");
                     }
                 }
             } else {

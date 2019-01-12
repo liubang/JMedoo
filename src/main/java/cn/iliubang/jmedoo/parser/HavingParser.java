@@ -10,16 +10,15 @@ import java.util.Map;
  * {Insert class description here}
  *
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
- * @version $Revision: {Version} $ $Date: 2018/5/29 20:49 $
+ * @version $Revision: {Version} $ $Date: 2019-01-12 21:51 $
  */
-public class WhereParser implements ParserInterface {
+public class HavingParser implements ParserInterface {
 
     @Override
     public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
-
         StringBuilder sql = new StringBuilder();
         Map<String, Object> whereMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
@@ -51,7 +50,7 @@ public class WhereParser implements ParserInterface {
         }
 
         if (sql.length() > 0) {
-            sql.insert(0, "WHERE ").append(" ");
+            sql.insert(0, "HAVING ").append(" ");
         }
 
         return sql.toString();

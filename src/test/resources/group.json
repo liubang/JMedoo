@@ -1,0 +1,14 @@
+{
+  "where": {
+    "name": ["e", "b", "c"]
+  },
+  "order": {
+    "name": "ASC",
+    "id": "DESC"
+  },
+  "limit": [
+    12,
+    34
+  ],
+  "group": ["name", "id"]
+}

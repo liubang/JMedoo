@@ -30,14 +30,14 @@ public class OrParser implements ParserInterface {
                 if (oAnd instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tAnd = (Map<String, Object>) entry.getValue();
-                    sql.append("(").append(ParserFactory.getAND_PARSER().parse(tAnd, lists)).append(") OR ");
+                    sql.append("(").append(ParserFactory.AND_PARSER.parse(tAnd, lists)).append(") OR ");
                 }
             } else if (entry.getKey().equals("OR") || entry.getKey().startsWith("OR#")) {
                 Object oOr = entry.getValue();
                 if (oOr instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tOr = (Map<String, Object>) oOr;
-                    sql.append("(").append(ParserFactory.getOR_PARSER().parse(tOr, lists)).append(") OR ");
+                    sql.append("(").append(ParserFactory.OR_PARSER.parse(tOr, lists)).append(") OR ");
                 }
             } else {
                 orMap.put(entry.getKey(), entry.getValue());

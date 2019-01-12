@@ -16,6 +16,8 @@ public class Query {
     private LinkedHashMap<String, Object> where;
     private LinkedHashMap<String, Object> order;
     private List<Integer> limit;
+    private List<String> group;
+    private LinkedHashMap<String, Object> having;
 
     public static QueryBuilder builder() {
         return new QueryBuilder();

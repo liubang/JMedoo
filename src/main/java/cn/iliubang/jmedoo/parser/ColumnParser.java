@@ -16,12 +16,11 @@ public class ColumnParser implements ParserInterface {
 
     @Override
     public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
-        if (null == lists || lists.isEmpty()) {
-            return "* ";
+        if (objects.length == 0) {
+            throw new SqlParseException("please specify columns");
         }
         StringBuilder sql = new StringBuilder();
-
-        for (Object o : lists) {
+        for (Object o : objects) {
             if (o instanceof String) {
                 String sO = (String) o;
                 if (!COLUMN_CHECK_PATTERN.matcher(sO).matches()) {
@@ -47,6 +46,8 @@ public class ColumnParser implements ParserInterface {
                             sql.append(StringUtil.camel2Underline(column)).append("\", ");
                         }
                     }
+                } else {
+                    sql.append("\"" + StringUtil.camel2Underline(sO) + "\", ");
                 }
             }
         }

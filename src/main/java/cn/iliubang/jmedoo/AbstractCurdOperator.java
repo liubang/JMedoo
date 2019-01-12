@@ -4,6 +4,7 @@ import cn.iliubang.jmedoo.annotation.Table;
 import cn.iliubang.jmedoo.entity.Query;
 import cn.iliubang.jmedoo.sharding.ShardingStrategyInterface;
 import lombok.NonNull;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
@@ -169,7 +170,7 @@ public abstract class AbstractCurdOperator<T> {
         return get(query, null);
     }
 
-    public long count(Map<String, Object> joinTable, String column, Query query, Map<String, Object> shardingKeys) {
+    public long count(Map<String, Object> joinTable, Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.COUNT,
                 getTableName(entryClass, shardingKeys), joinTable, column, query);
         logger.info("{}", sqlObjects);
@@ -189,52 +190,52 @@ public abstract class AbstractCurdOperator<T> {
         return count(null, null, query, shardingKeys);
     }
 
-    public long count(String column, Query query, Map<String, Object> shardingKeys) {
+    public long count(Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         return count(null, column, query, shardingKeys);
     }
 
     public <S> S max(Map<String, Object> joinTable,
-                     @NonNull String column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
+                     @NonNull Pair<String, String> column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.MAX,
                 getTableName(entryClass, shardingKeys), joinTable, column, query);
         logger.info("{}", sqlObjects);
         return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), sClass);
     }
 
-    public <S> S max(String column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
+    public <S> S max(Pair<String, String> column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
         return max(null, column, query, shardingKeys, sClass);
     }
 
-    public <S> S max(String column, Map<String, Object> shardingKeys, Class<S> sClass) {
+    public <S> S max(Pair<String, String> column, Map<String, Object> shardingKeys, Class<S> sClass) {
         return max(null, column, null, shardingKeys, sClass);
     }
 
-    public <S> S max(String column, Class<S> sClass) {
+    public <S> S max(Pair<String, String> column, Class<S> sClass) {
         return max(null, column, null, null, sClass);
     }
 
     public <S> S min(Map<String, Object> joinTable,
-                     @NonNull String column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
+                     @NonNull Pair<String, String> column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.MIN,
                 getTableName(entryClass, shardingKeys), joinTable, column, query);
         logger.info("{}", sqlObjects);
         return jdbcTemplateSlave.queryForObject(sqlObjects.getSql(), sqlObjects.getObjects(), sClass);
     }
 
-    public <S> S min(String column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
+    public <S> S min(Pair<String, String> column, Query query, Map<String, Object> shardingKeys, Class<S> sClass) {
         return min(null, column, query, shardingKeys, sClass);
     }
 
-    public <S> S min(String column, Map<String, Object> shardingKeys, Class<S> sClass) {
+    public <S> S min(Pair<String, String> column, Map<String, Object> shardingKeys, Class<S> sClass) {
         return min(null, column, null, shardingKeys, sClass);
     }
 
-    public <S> S min(String column, Class<S> sClass) {
+    public <S> S min(Pair<String, String> column, Class<S> sClass) {
         return min(null, column, null, null, sClass);
     }
 
     public double avg(Map<String, Object> joinTable,
-                      @NonNull String column, Query query, Map<String, Object> shardingKeys) {
+                      @NonNull Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.AVG,
                 getTableName(entryClass, shardingKeys), joinTable, column, query);
         logger.info("{}", sqlObjects);
@@ -246,20 +247,20 @@ public abstract class AbstractCurdOperator<T> {
         }
     }
 
-    public double avg(String column, Query query, Map<String, Object> shardingKeys) {
+    public double avg(Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         return avg(null, column, query, shardingKeys);
     }
 
-    public double avg(String column, Map<String, Object> shardingKeys) {
+    public double avg(Pair<String, String> column, Map<String, Object> shardingKeys) {
         return avg(null, column, null, shardingKeys);
     }
 
-    public double avg(String column) {
+    public double avg(Pair<String, String> column) {
         return avg(null, column, null, null);
     }
 
     public long sum(Map<String, Object> joinTable,
-                      @NonNull String column, Query query, Map<String, Object> shardingKeys) {
+                    @NonNull Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.SUM,
                 getTableName(entryClass, shardingKeys), joinTable, column, query);
         logger.info("{}", sqlObjects);
@@ -271,15 +272,15 @@ public abstract class AbstractCurdOperator<T> {
         }
     }
 
-    public long sum(String column, Query query, Map<String, Object> shardingKeys) {
+    public long sum(Pair<String, String> column, Query query, Map<String, Object> shardingKeys) {
         return sum(null, column, query, shardingKeys);
     }
 
-    public long sum(String column, Map<String, Object> shardingKeys) {
+    public long sum(Pair<String, String> column, Map<String, Object> shardingKeys) {
         return sum(null, column, null, shardingKeys);
     }
 
-    public long sum(String column) {
+    public long sum(Pair<String, String> column) {
         return sum(null, column, null, null);
     }
 
