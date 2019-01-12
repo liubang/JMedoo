@@ -14,8 +14,7 @@ import java.util.Map;
  */
 public class OrderParser implements ParserInterface {
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
-            throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
@@ -25,7 +24,7 @@ public class OrderParser implements ParserInterface {
         for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
             Object val = entry.getValue();
             String key = entry.getKey();
-            if (!orderCheckPattern.matcher(key).matches()) {
+            if (!ORDER_CHECK_PATTERN.matcher(key).matches()) {
                 throw new SqlParseException("Sql parsing error: bad column for ORDER operation (" + key + ")");
             }
             if (val instanceof String && (val.equals("ASC") || val.equals("DESC"))) {

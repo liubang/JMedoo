@@ -1,7 +1,5 @@
 package cn.iliubang.jmedoo.parser;
 
-import cn.iliubang.jmedoo.exception.SqlParseException;
-
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,15 +11,23 @@ import java.util.regex.Pattern;
  * @version $Revision: {Version} $ $Date: 2018/5/29 20:49 $
  */
 public interface ParserInterface {
-    String checkKey = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
-    String checkColumn = "^[a-zA-Z0-9_\\.\\*]+(\\([a-zA-Z0-9_]+\\))?$";
-    String checkJoin = "^\\[(\\>|\\<|\\>\\<|\\<\\>)\\][a-zA-Z0-9_]+$";
-    String checkOrder = "^[a-zA-Z0-9_]+$";
+    String CHECK_KEY = "^[a-zA-Z0-9_\\.]+(\\[(\\>|\\<|\\<\\=|\\>\\=|~|!~|\\<\\>|!)\\])?$";
+    String CHECK_COLUMN = "^[a-zA-Z0-9_\\.\\*]+(\\([a-zA-Z0-9_]+\\))?$";
+    String CHECK_JOIN = "^\\[(\\>|\\<|\\>\\<|\\<\\>)\\][a-zA-Z0-9_]+$";
+    String CHECK_ORDER = "^[a-zA-Z0-9_]+$";
 
-    Pattern keyCheckPattern = Pattern.compile(checkKey);
-    Pattern columnCheckPattern = Pattern.compile(checkColumn);
-    Pattern joinCheckPattern = Pattern.compile(checkJoin);
-    Pattern orderCheckPattern = Pattern.compile(checkOrder);
+    Pattern KEY_CHECK_PATTERN = Pattern.compile(CHECK_KEY);
+    Pattern COLUMN_CHECK_PATTERN = Pattern.compile(CHECK_COLUMN);
+    Pattern JOIN_CHECK_PATTERN = Pattern.compile(CHECK_JOIN);
+    Pattern ORDER_CHECK_PATTERN = Pattern.compile(CHECK_ORDER);
 
-    String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) throws SqlParseException;
+    /**
+     * parse query syntax.
+     *
+     * @param objectMap
+     * @param lists
+     * @param objects
+     * @return String
+     */
+    String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects);
 }

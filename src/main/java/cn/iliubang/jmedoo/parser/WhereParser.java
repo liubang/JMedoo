@@ -1,7 +1,6 @@
 package cn.iliubang.jmedoo.parser;
 
 import cn.iliubang.jmedoo.ParserFactory;
-import cn.iliubang.jmedoo.exception.SqlParseException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +15,7 @@ import java.util.Map;
 public class WhereParser implements ParserInterface {
 
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
-            throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }
@@ -30,14 +28,14 @@ public class WhereParser implements ParserInterface {
                 if (oAnd instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tAnd = (Map<String, Object>) entry.getValue();
-                    sql.append("(").append(ParserFactory.getAndParser().parse(tAnd, lists)).append(") AND ");
+                    sql.append("(").append(ParserFactory.getAND_PARSER().parse(tAnd, lists)).append(") AND ");
                 }
             } else if (entry.getKey().equals("OR") || entry.getKey().startsWith("OR#")) {
                 Object oOr = entry.getValue();
                 if (oOr instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tOr = (Map<String, Object>) oOr;
-                    sql.append("(").append(ParserFactory.getOrParser().parse(tOr, lists)).append(") AND ");
+                    sql.append("(").append(ParserFactory.getOR_PARSER().parse(tOr, lists)).append(") AND ");
                 }
             } else {
                 whereMap.put(entry.getKey(), entry.getValue());
@@ -45,7 +43,7 @@ public class WhereParser implements ParserInterface {
         }
 
         if (!whereMap.isEmpty()) {
-            sql.append(ParserFactory.getAndParser().parse(whereMap, lists));
+            sql.append(ParserFactory.getAND_PARSER().parse(whereMap, lists));
         }
 
         if (sql.toString().trim().endsWith("AND")) {

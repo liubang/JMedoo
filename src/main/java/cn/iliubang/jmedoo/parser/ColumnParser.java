@@ -15,8 +15,7 @@ import java.util.Map;
 public class ColumnParser implements ParserInterface {
 
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
-            throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == lists || lists.isEmpty()) {
             return "* ";
         }
@@ -25,7 +24,7 @@ public class ColumnParser implements ParserInterface {
         for (Object o : lists) {
             if (o instanceof String) {
                 String sO = (String) o;
-                if (!columnCheckPattern.matcher(sO).matches()) {
+                if (!COLUMN_CHECK_PATTERN.matcher(sO).matches()) {
                     throw new SqlParseException("Sql parsing error: bad column (" + sO + ")");
                 }
                 int index = -1;

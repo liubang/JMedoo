@@ -9,5 +9,11 @@ import java.util.Map;
  * @version $Revision: {Version} $ $Date: 2018/12/7 18:51 $
  */
 public interface ShardingStrategyInterface {
+    /**
+     * sharding method
+     *
+     * @param shardingKeys key-values needed by sharding.
+     * @return String
+     */
     String sharding(Map<String, Object> shardingKeys);
 }

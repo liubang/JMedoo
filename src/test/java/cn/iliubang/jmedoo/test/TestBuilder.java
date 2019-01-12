@@ -64,7 +64,7 @@ public class TestBuilder {
     public void testCount() throws Exception {
         String select = readFile("/select.json");
         Query query = JSON.parseObject(select, Query.class);
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("tableA", query);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.COUNT, "tableA", null, null, query);
         System.out.println(sqlObjects);
         Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(*) FROM \"table_a\" WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"outdate_time\" BETWEEN (?,?) AND \"table_a\".\"update_time\" > ? ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, t1, t2, 2018-12-21 12:12:12])", sqlObjects.toString());
     }
@@ -72,16 +72,13 @@ public class TestBuilder {
     @Test
     public void testCount1() throws Exception {
         String select = readFile("/select.json");
-        String column = readFile("/column.json");
         String join = readFile("/join.json");
         Query query = JSON.parseObject(select, Query.class);
         @SuppressWarnings("unchecked")
         Map<String, Object> joinTable = (Map<String, Object>) JSON.parseObject(join, Map.class);
-        @SuppressWarnings("unchecked")
-        List<Object> col = (List<Object>) JSON.parseObject(column, ArrayList.class);
-        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildCount("test", joinTable, col, query);
+        SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.COUNT, "test", joinTable, "testColumn", query);
         System.out.println(sqlObjects);
-        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(\"table_a\".\"column1\" AS \"tac1\", \"table_a\".*, \"table_b\".\"column1\" AS \"tbc1\", \"table_b\".\"column2\" AS \"tbc2\") FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"outdate_time\" BETWEEN (?,?) AND \"table_a\".\"update_time\" > ? ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, t1, t2, 2018-12-21 12:12:12])", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(testColumn) FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"outdate_time\" BETWEEN (?,?) AND \"table_a\".\"update_time\" > ? ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, t1, t2, 2018-12-21 12:12:12])", sqlObjects.toString());
     }
 
     @Test

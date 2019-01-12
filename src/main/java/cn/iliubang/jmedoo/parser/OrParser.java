@@ -16,8 +16,7 @@ import java.util.Map;
  */
 public class OrParser implements ParserInterface {
     @Override
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
-            throws SqlParseException {
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
 
             return "";
@@ -31,14 +30,14 @@ public class OrParser implements ParserInterface {
                 if (oAnd instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tAnd = (Map<String, Object>) entry.getValue();
-                    sql.append("(").append(ParserFactory.getAndParser().parse(tAnd, lists)).append(") OR ");
+                    sql.append("(").append(ParserFactory.getAND_PARSER().parse(tAnd, lists)).append(") OR ");
                 }
             } else if (entry.getKey().equals("OR") || entry.getKey().startsWith("OR#")) {
                 Object oOr = entry.getValue();
                 if (oOr instanceof Map) {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> tOr = (Map<String, Object>) oOr;
-                    sql.append("(").append(ParserFactory.getOrParser().parse(tOr, lists)).append(") OR ");
+                    sql.append("(").append(ParserFactory.getOR_PARSER().parse(tOr, lists)).append(") OR ");
                 }
             } else {
                 orMap.put(entry.getKey(), entry.getValue());
@@ -47,7 +46,7 @@ public class OrParser implements ParserInterface {
 
         for (Map.Entry<String, Object> entry : orMap.entrySet()) {
             String key = entry.getKey();
-            if (!keyCheckPattern.matcher(key).matches()) {
+            if (!KEY_CHECK_PATTERN.matcher(key).matches()) {
                 throw new SqlParseException("Sql parsing error: bad column (" + key + ")");
             }
             Object val = entry.getValue();
@@ -81,7 +80,6 @@ public class OrParser implements ParserInterface {
                     sql.append(" >= ? OR ");
                 } else if (op.equals("[!]")) {
                     isNot = true;
-                    // sql.append("\" != ? OR ");
                 } else if (op.equals("[!~]")) {
                     sql.append("\" NOT LIKE '%' ? '%' OR ");
                 } else if (op.equals("[<>]")) {

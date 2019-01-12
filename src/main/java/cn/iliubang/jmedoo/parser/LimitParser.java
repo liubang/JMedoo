@@ -13,8 +13,8 @@ import java.util.Map;
  * @version $Revision: {Version} $ $Date: 2018/5/29 20:50 $
  */
 public class LimitParser implements ParserInterface {
-    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects)
-            throws SqlParseException {
+    @Override
+    public String parse(Map<String, Object> objectMap, List<Object> lists, Object... objects) {
         if (null == objectMap || objectMap.isEmpty()) {
             return "";
         }

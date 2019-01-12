@@ -5,6 +5,7 @@ import cn.iliubang.jmedoo.entity.Query;
 import cn.iliubang.jmedoo.exception.SqlParseException;
 import cn.iliubang.jmedoo.util.StringUtil;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -25,19 +26,30 @@ public class SqlBuilder {
         private Object[] objects;
     }
 
-    public SqlObjects buildSelect(String tableName, Query query) throws SqlParseException {
+    public enum QueryFunc {
+        // COUNT()
+        COUNT,
+        // SUM()
+        SUM,
+        // MAX()
+        MAX,
+        // MIN
+        MIN,
+        // AVG
+        AVG
+    }
+
+    public SqlObjects buildSelect(String tableName, Query query) {
         StringBuilder sql = new StringBuilder();
         SqlObjects sqlObjects = new SqlObjects();
         sql.append("SELECT * FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != query) {
             ArrayList<Object> lists = new ArrayList<>();
-            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
-                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
-                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
-                        {
-                            put("limit", query.getLimit());
-                        }
-                    }, lists));
+            Map<String, Object> limit = new HashMap<>(1);
+            limit.put("limit", query.getLimit());
+            sql.append(ParserFactory.getWHERE_PARSER().parse(query.getWhere(), lists))
+                    .append(ParserFactory.getORDER_PARSER().parse(query.getOrder(), lists))
+                    .append(ParserFactory.getLIMIT_PARSER().parse(limit, lists));
             sqlObjects.setObjects(lists.toArray());
         }
 
@@ -52,20 +64,18 @@ public class SqlBuilder {
                                   Query query) {
         StringBuilder sql = new StringBuilder("SELECT ");
         SqlObjects sqlObjects = new SqlObjects();
-        sql.append(ParserFactory.getColumnParser().parse(null, column)).append("FROM \"")
+        sql.append(ParserFactory.getCOLUMN_PARSER().parse(null, column)).append("FROM \"")
                 .append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != joinTable) {
-            sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
+            sql.append(ParserFactory.getJOIN_PARSER().parse(joinTable, null, tableName));
         }
         if (null != query) {
             ArrayList<Object> lists = new ArrayList<>();
-            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
-                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
-                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
-                        {
-                            put("limit", query.getLimit());
-                        }
-                    }, lists));
+            Map<String, Object> limit = new HashMap<>(1);
+            limit.put("limit", query.getLimit());
+            sql.append(ParserFactory.getWHERE_PARSER().parse(query.getWhere(), lists))
+                    .append(ParserFactory.getORDER_PARSER().parse(query.getOrder(), lists))
+                    .append(ParserFactory.getLIMIT_PARSER().parse(limit, lists));
             sqlObjects.setObjects(lists.toArray());
         }
         sqlObjects.setSql(sql.toString().trim());
@@ -73,47 +83,32 @@ public class SqlBuilder {
         return sqlObjects;
     }
 
-    public SqlObjects buildCount(String tableName, Query query) throws SqlParseException {
+    public SqlObjects buildFuncQuery(@NonNull QueryFunc queryFunc,
+                                     @NonNull String tableName, Map<String, Object> joinTable, String column, Query query) {
         StringBuilder sql = new StringBuilder();
         SqlObjects sqlObjects = new SqlObjects();
-        sql.append("SELECT COUNT(*) FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
-        if (null != query) {
-            ArrayList<Object> lists = new ArrayList<>();
-            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
-                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
-                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
-                        {
-                            put("limit", query.getLimit());
-                        }
-                    }, lists));
-            sqlObjects.setObjects(lists.toArray());
+        if (null == column) {
+            if (queryFunc == QueryFunc.COUNT) {
+                sql.append("SELECT COUNT(*) FROM \"").append(StringUtil.camel2Underline(tableName)).append("\" ");
+            } else {
+                throw new SqlParseException(queryFunc.name() + " operation must specify the target column.");
+            }
+        } else {
+            sql.append("SELECT " + queryFunc.name() + "(" + column + ") FROM \"")
+                    .append(StringUtil.camel2Underline(tableName)).append("\" ");
         }
 
-        sqlObjects.setSql(sql.toString().trim());
-
-        return sqlObjects;
-    }
-
-    public SqlObjects buildCount(String tableName,
-                                 Map<String, Object> joinTable,
-                                 List<Object> column,
-                                 Query query) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(");
-        SqlObjects sqlObjects = new SqlObjects();
-        sql.append(ParserFactory.getColumnParser().parse(null, column).trim()).append(") FROM \"")
-                .append(StringUtil.camel2Underline(tableName)).append("\" ");
         if (null != joinTable) {
-            sql.append(ParserFactory.getJoinParser().parse(joinTable, null, tableName));
+            sql.append(ParserFactory.getJOIN_PARSER().parse(joinTable, null, tableName));
         }
+
         if (null != query) {
             ArrayList<Object> lists = new ArrayList<>();
-            sql.append(ParserFactory.getWhereParser().parse(query.getWhere(), lists))
-                    .append(ParserFactory.getOrderParser().parse(query.getOrder(), lists))
-                    .append(ParserFactory.getLimitParser().parse(new HashMap<String, Object>(1) {
-                        {
-                            put("limit", query.getLimit());
-                        }
-                    }, lists));
+            Map<String, Object> limit = new HashMap<>(1);
+            limit.put("limit", query.getLimit());
+            sql.append(ParserFactory.getWHERE_PARSER().parse(query.getWhere(), lists))
+                    .append(ParserFactory.getORDER_PARSER().parse(query.getOrder(), lists))
+                    .append(ParserFactory.getLIMIT_PARSER().parse(limit, lists));
             sqlObjects.setObjects(lists.toArray());
         }
         sqlObjects.setSql(sql.toString().trim());
@@ -136,7 +131,8 @@ public class SqlBuilder {
                     field.setAccessible(true);
                     Method method = tClass.getMethod("get" + StringUtil.ucfirst(field.getName()));
                     Object val = method.invoke(type);
-                    if (null != val) { // 所有字段都是NOT NULL 约束
+                    // all field not null
+                    if (null != val) {
                         sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\", ");
                         list.add(val);
                     }
@@ -145,7 +141,7 @@ public class SqlBuilder {
             }
 
             sql.deleteCharAt(sql.lastIndexOf(","));
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 sql.insert(0, "(").append(") VALUES (");
                 for (int i = 0; i < list.size(); ++i) {
                     sql.append("?,");
@@ -153,7 +149,7 @@ public class SqlBuilder {
                 sql.deleteCharAt(sql.lastIndexOf(",")).append(") ");
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalStateException(ex);
         }
 
         return sql.toString();
@@ -206,10 +202,12 @@ public class SqlBuilder {
                 throw new SqlParseException("Sql parsing error: update operation must set where condition.");
             }
             sql.deleteCharAt(sql.lastIndexOf(","))
-                    .append(ParserFactory.getWhereParser().parse(query.getWhere(), list));
+                    .append(ParserFactory.getWHERE_PARSER().parse(query.getWhere(), list));
 
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (SqlParseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
 
         return sql.toString();
@@ -248,7 +246,8 @@ public class SqlBuilder {
                 if (!field.isAnnotationPresent(Id.class)
                         || ((field.getAnnotation(Id.class).value() & Id.PRIMARY) == 0
                         && (field.getAnnotation(Id.class).value() & Id.UNIQUE) == 0)) {
-                    if (null != val) { // 所有字段都是NOT NULL 约束
+                    // all fields not null
+                    if (null != val) {
                         sql.append("\"").append(StringUtil.camel2Underline(field.getName())).append("\" = ?, ");
                         list.add(val);
                     }
@@ -260,10 +259,12 @@ public class SqlBuilder {
             if (!hasId) {
                 throw new SqlParseException("Sql parsing error: 'ON DUPLICATE KEY UPDATE' operation must have primary key or unique key.");
             }
-            sql.deleteCharAt(sql.lastIndexOf(","));
 
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            sql.deleteCharAt(sql.lastIndexOf(","));
+        } catch (SqlParseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
 
         return sql.toString();
@@ -302,7 +303,7 @@ public class SqlBuilder {
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
         String sql = "UPDATE \"" + StringUtil.camel2Underline(tableName) + "\" SET " +
-                mapToUpdateSql(map, list) + ParserFactory.getWhereParser().parse(query.getWhere(), list);
+                mapToUpdateSql(map, list) + ParserFactory.getWHERE_PARSER().parse(query.getWhere(), list);
         sqlObjects.setSql(sql);
         sqlObjects.setObjects(list.toArray());
 
@@ -321,7 +322,7 @@ public class SqlBuilder {
         SqlObjects sqlObjects = new SqlObjects();
         List<Object> list = new ArrayList<>();
         String sql = "DELETE FROM \"" + StringUtil.camel2Underline(tableName) + "\" "
-                + ParserFactory.getWhereParser().parse(query.getWhere(), list);
+                + ParserFactory.getWHERE_PARSER().parse(query.getWhere(), list);
         sqlObjects.setSql(sql);
         sqlObjects.setObjects(list.toArray());
 

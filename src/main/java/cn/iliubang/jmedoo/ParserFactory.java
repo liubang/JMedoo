@@ -10,19 +10,21 @@ import lombok.Getter;
  * @author <a href="mailto:it.liubang@gmail.com">liubang</a>
  * @version $Revision: {Version} $ $Date: 2018/5/29 21:03 $
  */
-public class ParserFactory {
+public final class ParserFactory {
+    private ParserFactory() { }
+
     @Getter
-    private static final ParserInterface whereParser = new WhereParser();
+    private static final ParserInterface WHERE_PARSER = new WhereParser();
     @Getter
-    private static final ParserInterface andParser = new AndParser();
+    private static final ParserInterface AND_PARSER = new AndParser();
     @Getter
-    private static final ParserInterface orParser = new OrParser();
+    private static final ParserInterface OR_PARSER = new OrParser();
     @Getter
-    private static final ParserInterface orderParser = new OrderParser();
+    private static final ParserInterface ORDER_PARSER = new OrderParser();
     @Getter
-    private static final ParserInterface limitParser = new LimitParser();
+    private static final ParserInterface LIMIT_PARSER = new LimitParser();
     @Getter
-    private static final ParserInterface joinParser = new JoinParser();
+    private static final ParserInterface JOIN_PARSER = new JoinParser();
     @Getter
-    private static final ParserInterface columnParser = new ColumnParser();
+    private static final ParserInterface COLUMN_PARSER = new ColumnParser();
 }
