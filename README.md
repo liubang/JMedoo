@@ -2,6 +2,7 @@
 Java版的Medoo查询表达式
 
 [![Build Status](https://travis-ci.org/iliubang/JMedoo.svg?branch=master)](https://travis-ci.org/iliubang/JMedoo)
+[![codecov](https://codecov.io/gh/iliubang/JMedoo/branch/master/graph/badge.svg)](https://codecov.io/gh/iliubang/JMedoo)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.iliubang/jmedoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.iliubang/jmedoo)
 
 maven添加依赖
