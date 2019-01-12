@@ -78,7 +78,7 @@ public class TestBuilder {
 
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.COUNT, "test", null, Pair.of("id", "c"), query);
         System.out.println(sqlObjects.toString());
-        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(id) AS \"c\" FROM \"test\" GROUP BY \"type\" HAVING \"c\" > ?, objects=[10])", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(\"id\") AS \"c\" FROM \"test\" GROUP BY \"type\" HAVING \"c\" > ?, objects=[10])", sqlObjects.toString());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TestBuilder {
         Map<String, Object> joinTable = (Map<String, Object>) JSON.parseObject(join, Map.class);
         SqlBuilder.SqlObjects sqlObjects = new SqlBuilder().buildFuncQuery(SqlBuilder.QueryFunc.COUNT, "test", joinTable, Pair.of("testColumn", null), query);
         System.out.println(sqlObjects);
-        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(testColumn) FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"outdate_time\" BETWEEN (?,?) AND \"table_a\".\"update_time\" > ? ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, t1, t2, 2018-12-21 12:12:12])", sqlObjects.toString());
+        Assert.assertEquals("SqlBuilder.SqlObjects(sql=SELECT COUNT(\"test_column\") FROM \"test\" INNER JOIN \"table_d\" USING (\"tdc1\") LEFT JOIN \"table_e\" ON \"table_d\".\"table_dc1\" = \"table_e\".\"table_ec1\" AND \"table_d\".\"table_dc2\" = \"table_e\".\"maste_ec2\" LEFT JOIN \"table_b\" USING (\"tbc1\") RIGHT JOIN \"table_a\" USING (\"tac1\") FULL JOIN \"table_c\" USING (\"tcc1\") WHERE ((\"or12\" = ? OR \"or11\" < ?) AND ((\"or3and12\" = ? AND \"or3and11\" = ?) OR (\"or3and21\" = ? AND \"or3and22\" = ?)) AND (\"or21\" = ? OR \"or22\" = ?)) AND (\"and21\" != ? AND \"and22\" = ?) AND \"outdate_time\" BETWEEN (?,?) AND \"table_a\".\"update_time\" > ? ORDER BY \"name\" ASC, \"id\" DESC LIMIT 12, 34, objects=[or12, or11, or3and12, or3and11, or3and21, or3and22, or21, or22, and21, and22, t1, t2, 2018-12-21 12:12:12])", sqlObjects.toString());
     }
 
     @Test

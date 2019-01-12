@@ -98,10 +98,10 @@ public class SqlBuilder {
             }
         } else {
             if (column.getRight() == null) {
-                sql.append("SELECT " + queryFunc.name() + "(" + column.getLeft() + ") FROM \"")
+                sql.append("SELECT " + queryFunc.name() + "(\"" + StringUtil.camel2Underline(column.getLeft()) + "\") FROM \"")
                         .append(StringUtil.camel2Underline(tableName)).append("\" ");
             } else {
-                sql.append("SELECT " + queryFunc.name() + "(" + column.getLeft() + ") AS \"" + column.getRight() + "\" FROM \"")
+                sql.append("SELECT " + queryFunc.name() + "(\"" + StringUtil.camel2Underline(column.getLeft()) + "\") AS \"" + column.getRight() + "\" FROM \"")
                         .append(StringUtil.camel2Underline(tableName)).append("\" ");
             }
         }
